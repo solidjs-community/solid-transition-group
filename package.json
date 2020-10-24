@@ -1,0 +1,32 @@
+{
+  "name": "solid-transition-group",
+  "description": "Webcomponents wrapper for Solid",
+  "author": "Ryan Carniato",
+  "license": "MIT",
+  "version": "0.0.1",
+  "homepage": "https://github.com/ryansolid/solid-transition-group#readme",
+  "main": "lib/solid-transition-group.js",
+  "module": "dist/solid-transition-group.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "dist",
+    "lib",
+    "types"
+  ],
+  "sideEffects": "false",
+  "scripts": {
+    "build": "rollup -c && tsc"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-typescript": "^7.10.4",
+    "@rollup/plugin-babel": "5.2.1",
+    "@rollup/plugin-node-resolve": "9.0.0",
+    "rollup": "^2.32.1",
+    "solid-js": "^0.21.1",
+    "typescript": "~4.0.3"
+  },
+  "peerDependencies": {
+    "solid-js": "^0.21.1"
+  }
+}
