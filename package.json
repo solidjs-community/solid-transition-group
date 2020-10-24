@@ -1,10 +1,14 @@
 {
   "name": "solid-transition-group",
-  "description": "Webcomponents wrapper for Solid",
+  "description": "Components to manage animations for SolidJS",
   "author": "Ryan Carniato",
   "license": "MIT",
   "version": "0.0.1",
   "homepage": "https://github.com/ryansolid/solid-transition-group#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ryansolid/solid-transition-group"
+  },
   "main": "lib/solid-transition-group.js",
   "module": "dist/solid-transition-group.js",
   "types": "types/index.d.ts",
