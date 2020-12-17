@@ -1,4 +1,12 @@
-import { createSignal, createMemo, createComputed, untrack, batch, assignProps } from "solid-js";
+import {
+  createSignal,
+  createMemo,
+  createComputed,
+  untrack,
+  batch,
+  assignProps,
+  Component
+} from "solid-js";
 
 type TransitionProps = {
   name?: string;
@@ -19,11 +27,11 @@ type TransitionProps = {
   mode?: "inout" | "outin";
 };
 
-export function Transition(props: TransitionProps) {
+export const Transition: Component<TransitionProps> = props => {
   let el: Element;
   let first = true;
-  const [s1, set1] = createSignal();
-  const [s2, set2] = createSignal();
+  const [s1, set1] = createSignal<Element | undefined>();
+  const [s2, set2] = createSignal<Element | undefined>();
   const children = createMemo(() => props.children),
     resolved = createMemo(() => {
       let c = children();
@@ -119,4 +127,4 @@ export function Transition(props: TransitionProps) {
     });
   });
   return [s1, s2];
-}
+};

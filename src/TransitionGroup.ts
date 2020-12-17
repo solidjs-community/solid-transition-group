@@ -1,4 +1,11 @@
-import { createSignal, createMemo, createComputed, createEffect, assignProps } from "solid-js";
+import {
+  createSignal,
+  createMemo,
+  createComputed,
+  createEffect,
+  assignProps,
+  Component
+} from "solid-js";
 
 type BoundingRect = {
   top: number;
@@ -47,7 +54,7 @@ type TransitionGroupProps = {
   onAfterExit?: (el: Element) => void;
   children?: any;
 };
-export function TransitionGroup(props: TransitionGroupProps) {
+export const TransitionGroup: Component<TransitionGroupProps> = props => {
   const children = createMemo(() => props.children),
     resolved = createMemo(() => {
       let c = children();
@@ -205,4 +212,4 @@ export function TransitionGroup(props: TransitionGroupProps) {
     return nodes!;
   }, new Map());
   return combined;
-}
+};
