@@ -4,7 +4,7 @@ import {
   createComputed,
   untrack,
   batch,
-  assignProps,
+  mergeProps,
   Component
 } from "solid-js";
 
@@ -39,7 +39,7 @@ export const Transition: Component<TransitionProps> = props => {
       return c;
     });
   const name = props.name || "s";
-  props = assignProps(
+  props = mergeProps(
     {
       name,
       enterActiveClass: name + "-enter-active",

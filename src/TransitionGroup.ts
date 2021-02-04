@@ -3,7 +3,7 @@ import {
   createMemo,
   createComputed,
   createEffect,
-  assignProps,
+  mergeProps,
   Component
 } from "solid-js";
 
@@ -62,7 +62,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
       return c;
     });
   const name = props.name || "s";
-  props = assignProps(
+  props = mergeProps(
     {
       name,
       enterActiveClass: name + "-enter-active",

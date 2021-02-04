@@ -16,7 +16,7 @@ const plugins = [
 export default {
   input: 'src/index.ts',
   output: [{
-    file: 'lib//solid-transition-group.js',
+    file: 'dist//solid-transition-group.cjs',
     format: 'cjs'
   }, {
     file: 'dist//solid-transition-group.js',
