@@ -1,10 +1,10 @@
 import {
   createSignal,
-  createMemo,
   createComputed,
   createEffect,
   mergeProps,
-  Component
+  Component,
+  children
 } from "solid-js";
 
 type BoundingRect = {
@@ -55,12 +55,7 @@ type TransitionGroupProps = {
   children?: any;
 };
 export const TransitionGroup: Component<TransitionGroupProps> = props => {
-  const children = createMemo(() => props.children),
-    resolved = createMemo(() => {
-      let c = children();
-      while (typeof c === "function") c = c();
-      return c;
-    });
+  const resolved = children(() => props.children);
   const name = props.name || "s";
   props = mergeProps(
     {
@@ -80,7 +75,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
   let p: Element[] = [];
   let first = true;
   createComputed(() => {
-    const c = resolved();
+    const c = resolved() as Element[];
     const comb = [...c];
     const next = new Set(c);
     const prev = new Set(p);

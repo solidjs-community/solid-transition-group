@@ -3,7 +3,7 @@
   "description": "Components to manage animations for SolidJS",
   "author": "Ryan Carniato",
   "license": "MIT",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "homepage": "https://github.com/solidui/solid-transition-group#readme",
   "repository": {
     "type": "git",

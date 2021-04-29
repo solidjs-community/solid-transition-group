@@ -1,11 +1,12 @@
 import {
   createSignal,
-  createMemo,
   createComputed,
   untrack,
   batch,
   mergeProps,
-  Component
+  Component,
+  children,
+  JSX
 } from "solid-js";
 
 type TransitionProps = {
@@ -22,7 +23,7 @@ type TransitionProps = {
   onBeforeExit?: (el: Element) => void;
   onExit?: (el: Element, done: () => void) => void;
   onAfterExit?: (el: Element) => void;
-  children?: any;
+  children?: Element;
   appear?: boolean;
   mode?: "inout" | "outin";
 };
@@ -32,12 +33,7 @@ export const Transition: Component<TransitionProps> = props => {
   let first = true;
   const [s1, set1] = createSignal<Element | undefined>();
   const [s2, set2] = createSignal<Element | undefined>();
-  const children = createMemo(() => props.children),
-    resolved = createMemo(() => {
-      let c = children();
-      while (typeof c === "function") c = c();
-      return c;
-    });
+  const resolved = children(() => props.children);
   const name = props.name || "s";
   props = mergeProps(
     {
@@ -114,7 +110,7 @@ export const Transition: Component<TransitionProps> = props => {
   }
 
   createComputed<Element>(prev => {
-    el = resolved();
+    el = resolved() as Element;
     while (typeof el === "function") el = (el as Function)();
     return untrack(() => {
       if (el && el !== prev) {
