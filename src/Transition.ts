@@ -23,7 +23,7 @@ type TransitionProps = {
   onBeforeExit?: (el: Element) => void;
   onExit?: (el: Element, done: () => void) => void;
   onAfterExit?: (el: Element) => void;
-  children?: Element;
+  children?: JSX.Element;
   appear?: boolean;
   mode?: "inout" | "outin";
 };
