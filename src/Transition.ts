@@ -56,7 +56,7 @@ export const Transition: Component<TransitionProps> = props => {
       onBeforeEnter && onBeforeEnter(el);
       el.classList.add(...enterClasses);
       el.classList.add(...enterActiveClasses);
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         el.classList.remove(...enterClasses);
         el.classList.add(...enterToClasses);
         onEnter && onEnter(el, endTransition);
@@ -64,7 +64,7 @@ export const Transition: Component<TransitionProps> = props => {
           el.addEventListener("transitionend", endTransition, { once: true });
           el.addEventListener("animationend", endTransition, { once: true });
         }
-      }, 0);
+      });
 
       function endTransition() {
         if (el) {
@@ -90,10 +90,10 @@ export const Transition: Component<TransitionProps> = props => {
     onBeforeExit && onBeforeExit(prev);
     prev.classList.add(...exitClasses);
     prev.classList.add(...exitActiveClasses);
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       prev.classList.remove(...exitClasses);
       prev.classList.add(...exitToClasses);
-    }, 0);
+    });
     onExit && onExit(prev, endTransition);
     if (!onExit || onExit.length < 2) {
       prev.addEventListener("transitionend", endTransition, { once: true });

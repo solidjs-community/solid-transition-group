@@ -91,7 +91,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
         onBeforeEnter && onBeforeEnter(el);
         el.classList.add(...enterClasses);
         el.classList.add(...enterActiveClasses);
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           el.classList.remove(...enterClasses);
           el.classList.add(...enterToClasses);
           onEnter && onEnter(el, endTransition);
@@ -99,7 +99,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
             el.addEventListener("transitionend", endTransition, { once: true });
             el.addEventListener("animationend", endTransition, { once: true });
           }
-        }, 0);
+        });
         function endTransition() {
           if (el) {
             el.classList.remove(...enterActiveClasses);
@@ -116,10 +116,10 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
         onBeforeExit && onBeforeExit(old);
         old.classList.add(...exitClasses);
         old.classList.add(...exitActiveClasses);
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           old.classList.remove(...exitClasses);
           old.classList.add(...exitToClasses);
-        }, 0);
+        });
         onExit && onExit(old, endTransition);
         if (!onExit || onExit.length < 2) {
           old.addEventListener("transitionend", endTransition, { once: true });

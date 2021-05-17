@@ -3,11 +3,11 @@
   "description": "Components to manage animations for SolidJS",
   "author": "Ryan Carniato",
   "license": "MIT",
-  "version": "0.0.6",
-  "homepage": "https://github.com/solidui/solid-transition-group#readme",
+  "version": "0.0.7",
+  "homepage": "https://github.com/solidjs/solid-transition-group#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/solidui/solid-transition-group"
+    "url": "https://github.com/solidjs/solid-transition-group"
   },
   "type": "module",
   "main": "dist/solid-transition-group.cjs",
