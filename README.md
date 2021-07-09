@@ -6,6 +6,18 @@ Known limitation: Transition and Transition Group work on detecting changes on D
 
 Animations aren't always smooth under rapid input still working on improving.
 
+## Installation
+
+```bash
+npm install solid-transition-group
+```
+
+OR
+
+```bash
+yarn add solid-transition-group
+```
+
 ## Transition
 
 Props:
