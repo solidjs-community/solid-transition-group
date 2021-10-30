@@ -6,6 +6,7 @@ import {
   Component,
   children
 } from "solid-js";
+import { nextFrame } from "./utils";
 
 type BoundingRect = {
   top: number;
@@ -91,7 +92,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
         onBeforeEnter && onBeforeEnter(el);
         el.classList.add(...enterClasses);
         el.classList.add(...enterActiveClasses);
-        requestAnimationFrame(() => {
+        nextFrame(() => {
           el.classList.remove(...enterClasses);
           el.classList.add(...enterToClasses);
           onEnter && onEnter(el, endTransition);
@@ -116,7 +117,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
         onBeforeExit && onBeforeExit(old);
         old.classList.add(...exitClasses);
         old.classList.add(...exitActiveClasses);
-        requestAnimationFrame(() => {
+        nextFrame(() => {
           old.classList.remove(...exitClasses);
           old.classList.add(...exitToClasses);
         });
