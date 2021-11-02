@@ -8,6 +8,7 @@ import {
   children,
   JSX
 } from "solid-js";
+import { nextFrame } from "./utils";
 
 type TransitionProps = {
   name?: string;
@@ -56,7 +57,7 @@ export const Transition: Component<TransitionProps> = props => {
       onBeforeEnter && onBeforeEnter(el);
       el.classList.add(...enterClasses);
       el.classList.add(...enterActiveClasses);
-      requestAnimationFrame(() => {
+      nextFrame(() => {
         el.classList.remove(...enterClasses);
         el.classList.add(...enterToClasses);
         onEnter && onEnter(el, endTransition);
@@ -90,7 +91,7 @@ export const Transition: Component<TransitionProps> = props => {
     onBeforeExit && onBeforeExit(prev);
     prev.classList.add(...exitClasses);
     prev.classList.add(...exitActiveClasses);
-    requestAnimationFrame(() => {
+    nextFrame(() => {
       prev.classList.remove(...exitClasses);
       prev.classList.add(...exitToClasses);
     });
