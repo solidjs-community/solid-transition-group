@@ -1,3 +1,7 @@
+<p>
+  <img width="100%" src="https://assets.solidjs.com/banner?project=Transition Group&type=core" alt="Solid Transition Group">
+</p>
+
 # Solid Transition Group
 
 Animation library influenced by React Transition Group and Vue Transitions for the SolidJS library.
