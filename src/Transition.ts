@@ -62,13 +62,15 @@ export const Transition: Component<TransitionProps> = props => {
         el.classList.add(...enterToClasses);
         onEnter && onEnter(el, endTransition);
         if (!onEnter || onEnter.length < 2) {
-          el.addEventListener("transitionend", endTransition, { once: true });
-          el.addEventListener("animationend", endTransition, { once: true });
+          el.addEventListener("transitionend", endTransition);
+          el.addEventListener("animationend", endTransition);
         }
       });
 
-      function endTransition() {
-        if (el) {
+      function endTransition(e?: Event) {
+        if (el && (!e || e.target === el)) {
+          el.removeEventListener("transitionend", endTransition);
+          el.removeEventListener("animationend", endTransition);
           el.classList.remove(...enterActiveClasses);
           el.classList.remove(...enterToClasses);
           batch(() => {
@@ -97,16 +99,20 @@ export const Transition: Component<TransitionProps> = props => {
     });
     onExit && onExit(prev, endTransition);
     if (!onExit || onExit.length < 2) {
-      prev.addEventListener("transitionend", endTransition, { once: true });
-      prev.addEventListener("animationend", endTransition, { once: true });
+      prev.addEventListener("transitionend", endTransition);
+      prev.addEventListener("animationend", endTransition);
     }
 
-    function endTransition() {
-      prev.classList.remove(...exitActiveClasses);
-      prev.classList.remove(...exitToClasses);
-      s1() === prev && set1(undefined);
-      onAfterExit && onAfterExit(prev);
-      if (props.mode === "outin") enterTransition(el, prev);
+    function endTransition(e?: Event) {
+      if (!e || e.target === prev) {
+        prev.removeEventListener("transitionend", endTransition);
+        prev.removeEventListener("animationend", endTransition);
+        prev.classList.remove(...exitActiveClasses);
+        prev.classList.remove(...exitToClasses);
+        s1() === prev && set1(undefined);
+        onAfterExit && onAfterExit(prev);
+        if (props.mode === "outin") enterTransition(el, prev);
+      }
     }
   }
 
