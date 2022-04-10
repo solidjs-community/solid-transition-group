@@ -60,7 +60,7 @@ export const Transition: Component<TransitionProps> = props => {
       nextFrame(() => {
         el.classList.remove(...enterClasses);
         el.classList.add(...enterToClasses);
-        onEnter && onEnter(el, endTransition);
+        onEnter && onEnter(el, () => endTransition());
         if (!onEnter || onEnter.length < 2) {
           el.addEventListener("transitionend", endTransition);
           el.addEventListener("animationend", endTransition);
@@ -97,7 +97,7 @@ export const Transition: Component<TransitionProps> = props => {
       prev.classList.remove(...exitClasses);
       prev.classList.add(...exitToClasses);
     });
-    onExit && onExit(prev, endTransition);
+    onExit && onExit(prev, () => endTransition());
     if (!onExit || onExit.length < 2) {
       prev.addEventListener("transitionend", endTransition);
       prev.addEventListener("animationend", endTransition);

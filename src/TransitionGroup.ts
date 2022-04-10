@@ -95,7 +95,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
         nextFrame(() => {
           el.classList.remove(...enterClasses);
           el.classList.add(...enterToClasses);
-          onEnter && onEnter(el, endTransition);
+          onEnter && onEnter(el, () => endTransition());
           if (!onEnter || onEnter.length < 2) {
             el.addEventListener("transitionend", endTransition);
             el.addEventListener("animationend", endTransition);
@@ -123,7 +123,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
           old.classList.remove(...exitClasses);
           old.classList.add(...exitToClasses);
         });
-        onExit && onExit(old, endTransition);
+        onExit && onExit(old, () => endTransition());
         if (!onExit || onExit.length < 2) {
           old.addEventListener("transitionend", endTransition);
           old.addEventListener("animationend", endTransition);
