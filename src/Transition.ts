@@ -3,10 +3,9 @@ import {
   createComputed,
   untrack,
   batch,
-  mergeProps,
   Component,
   children,
-  JSX
+  JSX, createEffect
 } from "solid-js";
 import { nextFrame } from "./utils";
 
@@ -36,24 +35,34 @@ export const Transition: Component<TransitionProps> = props => {
   const [s2, set2] = createSignal<Element | undefined>();
   const resolved = children(() => props.children);
   const name = props.name || "s";
-  props = mergeProps(
-    {
-      name,
-      enterActiveClass: name + "-enter-active",
-      enterClass: name + "-enter",
-      enterToClass: name + "-enter-to",
-      exitActiveClass: name + "-exit-active",
-      exitClass: name + "-exit",
-      exitToClass: name + "-exit-to"
-    },
-    props
-  );
+
+  let enterActiveClass = name + "-enter-active"
+  let enterClass = name + "-enter"
+  let enterToClass = name + "-enter-to"
+  let exitActiveClass = name + "-exit-active"
+  let exitClass = name + "-exit"
+  let exitToClass = name + "-exit-to"
+
   const { onBeforeEnter, onEnter, onAfterEnter, onBeforeExit, onExit, onAfterExit } = props;
+
+  createEffect(() => {
+    // effect if the name of animation changes
+    const name = props.name || "s";
+
+    // declare classes with new name property
+    enterActiveClass = name + "-enter-active"
+    enterClass = name + "-enter"
+    enterToClass = name + "-enter-to"
+    exitActiveClass = name + "-exit-active"
+    exitClass = name + "-exit"
+    exitToClass = name + "-exit-to"
+  })
+
   function enterTransition(el: Element, prev: Element | undefined) {
     if (!first || props.appear) {
-      const enterClasses = props.enterClass!.split(" ");
-      const enterActiveClasses = props.enterActiveClass!.split(" ");
-      const enterToClasses = props.enterToClass!.split(" ");
+      const enterClasses = enterClass!.split(" ");
+      const enterActiveClasses = enterActiveClass!.split(" ");
+      const enterToClasses = enterToClass!.split(" ");
       onBeforeEnter && onBeforeEnter(el);
       el.classList.add(...enterClasses);
       el.classList.add(...enterActiveClasses);
@@ -86,9 +95,9 @@ export const Transition: Component<TransitionProps> = props => {
   }
 
   function exitTransition(el: Element, prev: Element) {
-    const exitClasses = props.exitClass!.split(" ");
-    const exitActiveClasses = props.exitActiveClass!.split(" ");
-    const exitToClasses = props.exitToClass!.split(" ");
+    const exitClasses = exitClass!.split(" ");
+    const exitActiveClasses = exitActiveClass!.split(" ");
+    const exitToClasses = exitToClass!.split(" ");
     if (!prev.parentNode) return endTransition();
     onBeforeExit && onBeforeExit(prev);
     prev.classList.add(...exitClasses);
