@@ -2,7 +2,7 @@ import {
   createSignal,
   createComputed,
   createEffect,
-  mergeProps,
+  createMemo,
   Component,
   children
 } from "solid-js";
@@ -57,10 +57,9 @@ type TransitionGroupProps = {
 };
 export const TransitionGroup: Component<TransitionGroupProps> = props => {
   const resolved = children(() => props.children);
-  const name = props.name || "s";
-  props = mergeProps(
-    {
-      name,
+  const classnames = createMemo(() => {
+    const name = props.name || "s";
+    return {
       enterActiveClass: name + "-enter-active",
       enterClass: name + "-enter",
       enterToClass: name + "-enter-to",
@@ -68,9 +67,8 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
       exitClass: name + "-exit",
       exitToClass: name + "-exit-to",
       moveClass: name + "-move"
-    },
-    props
-  );
+    };
+  });
   const { onBeforeEnter, onEnter, onAfterEnter, onBeforeExit, onExit, onAfterExit } = props;
   const [combined, setCombined] = createSignal<Element[]>();
   let p: Element[] = [];
@@ -80,12 +78,12 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
     const comb = [...c];
     const next = new Set(c);
     const prev = new Set(p);
-    const enterClasses = props.enterClass!.split(" ");
-    const enterActiveClasses = props.enterActiveClass!.split(" ");
-    const enterToClasses = props.enterToClass!.split(" ");
-    const exitClasses = props.exitClass!.split(" ");
-    const exitActiveClasses = props.exitActiveClass!.split(" ");
-    const exitToClasses = props.exitToClass!.split(" ");
+    const enterClasses = classnames().enterClass!.split(" ");
+    const enterActiveClasses = classnames().enterActiveClass!.split(" ");
+    const enterToClasses = classnames().enterToClass!.split(" ");
+    const exitClasses = classnames().exitClass!.split(" ");
+    const exitActiveClasses = classnames().exitActiveClass!.split(" ");
+    const exitToClasses = classnames().exitToClass!.split(" ");
     for (let i = 0; i < c.length; i++) {
       const el = c[i];
       if (!first && !prev.has(el)) {
@@ -192,7 +190,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
       if (c.moved) {
         c.moved = false;
         const s = (child as HTMLElement | SVGElement).style;
-        const moveClasses = props.moveClass!.split(" ");
+        const moveClasses = classnames().moveClass!.split(" ");
         child.classList.add(...moveClasses);
         s.transform = s.transitionDuration = "";
         function endTransition(e: TransitionEvent) {
