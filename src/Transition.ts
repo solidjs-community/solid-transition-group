@@ -3,10 +3,9 @@ import {
   createComputed,
   untrack,
   batch,
-  mergeProps,
   Component,
   children,
-  JSX
+  JSX, createMemo
 } from "solid-js";
 import { nextFrame } from "./utils";
 
@@ -35,25 +34,26 @@ export const Transition: Component<TransitionProps> = props => {
   const [s1, set1] = createSignal<Element | undefined>();
   const [s2, set2] = createSignal<Element | undefined>();
   const resolved = children(() => props.children);
-  const name = props.name || "s";
-  props = mergeProps(
-    {
-      name,
+
+  const { onBeforeEnter, onEnter, onAfterEnter, onBeforeExit, onExit, onAfterExit } = props;
+
+  const classnames = createMemo(() => {
+    const name = props.name || "s";
+    return {
       enterActiveClass: name + "-enter-active",
       enterClass: name + "-enter",
       enterToClass: name + "-enter-to",
       exitActiveClass: name + "-exit-active",
       exitClass: name + "-exit",
-      exitToClass: name + "-exit-to"
-    },
-    props
-  );
-  const { onBeforeEnter, onEnter, onAfterEnter, onBeforeExit, onExit, onAfterExit } = props;
+      exitToClass: name + "-exit-to",
+    };
+  });
+
   function enterTransition(el: Element, prev: Element | undefined) {
     if (!first || props.appear) {
-      const enterClasses = props.enterClass!.split(" ");
-      const enterActiveClasses = props.enterActiveClass!.split(" ");
-      const enterToClasses = props.enterToClass!.split(" ");
+      const enterClasses = classnames().enterClass!.split(" ");
+      const enterActiveClasses = classnames().enterActiveClass!.split(" ");
+      const enterToClasses = classnames().enterToClass!.split(" ");
       onBeforeEnter && onBeforeEnter(el);
       el.classList.add(...enterClasses);
       el.classList.add(...enterActiveClasses);
@@ -86,9 +86,9 @@ export const Transition: Component<TransitionProps> = props => {
   }
 
   function exitTransition(el: Element, prev: Element) {
-    const exitClasses = props.exitClass!.split(" ");
-    const exitActiveClasses = props.exitActiveClass!.split(" ");
-    const exitToClasses = props.exitToClass!.split(" ");
+    const exitClasses = classnames().exitClass!.split(" ");
+    const exitActiveClasses = classnames().exitActiveClass!.split(" ");
+    const exitToClasses = classnames().exitToClass!.split(" ");
     if (!prev.parentNode) return endTransition();
     onBeforeExit && onBeforeExit(prev);
     prev.classList.add(...exitClasses);
