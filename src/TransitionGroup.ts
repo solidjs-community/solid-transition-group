@@ -4,7 +4,8 @@ import {
   createEffect,
   createMemo,
   Component,
-  children
+  children,
+  mergeProps
 } from "solid-js";
 import { nextFrame } from "./utils";
 
@@ -54,8 +55,11 @@ type TransitionGroupProps = {
   onExit?: (el: Element, done: () => void) => void;
   onAfterExit?: (el: Element) => void;
   children?: any;
+  delayEnter?: boolean;
 };
 export const TransitionGroup: Component<TransitionGroupProps> = props => {
+  const merged = mergeProps({ delayEnter: true }, props);
+
   const resolved = children(() => props.children);
   const classnames = createMemo(() => {
     const name = props.name || "s";
@@ -90,7 +94,8 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
         onBeforeEnter && onBeforeEnter(el);
         el.classList.add(...enterClasses);
         el.classList.add(...enterActiveClasses);
-        nextFrame(() => {
+        const run = merged.delayEnter ? nextFrame : requestAnimationFrame;
+        run(() => {
           el.classList.remove(...enterClasses);
           el.classList.add(...enterToClasses);
           onEnter && onEnter(el, () => endTransition());

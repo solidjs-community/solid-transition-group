@@ -6,7 +6,8 @@ import {
   Component,
   children,
   JSX,
-  createMemo
+  createMemo,
+  mergeProps
 } from "solid-js";
 import { nextFrame } from "./utils";
 
@@ -27,9 +28,12 @@ type TransitionProps = {
   children?: JSX.Element;
   appear?: boolean;
   mode?: "inout" | "outin";
+  delayEnter?: boolean;
 };
 
 export const Transition: Component<TransitionProps> = props => {
+  const merged = mergeProps({ delayEnter: true }, props);
+
   let el: Element;
   let first = true;
   const [s1, set1] = createSignal<Element | undefined>();
@@ -41,12 +45,12 @@ export const Transition: Component<TransitionProps> = props => {
   const classnames = createMemo(() => {
     const name = props.name || "s";
     return {
-      enterActiveClass: props.enterActiveClass || name + "-enter-active",
-      enterClass: props.enterClass || name + "-enter",
-      enterToClass: props.enterToClass || name + "-enter-to",
-      exitActiveClass: props.exitActiveClass || name + "-exit-active",
-      exitClass: props.exitClass || name + "-exit",
-      exitToClass: props.exitToClass || name + "-exit-to"
+      enterActiveClass: name + "-enter-active",
+      enterClass: name + "-enter",
+      enterToClass: name + "-enter-to",
+      exitActiveClass: name + "-exit-active",
+      exitClass: name + "-exit",
+      exitToClass: name + "-exit-to"
     };
   });
 
@@ -58,7 +62,8 @@ export const Transition: Component<TransitionProps> = props => {
       onBeforeEnter && onBeforeEnter(el);
       el.classList.add(...enterClasses);
       el.classList.add(...enterActiveClasses);
-      nextFrame(() => {
+      const run = merged.delayEnter ? nextFrame : requestAnimationFrame;
+      run(() => {
         el.classList.remove(...enterClasses);
         el.classList.add(...enterToClasses);
         onEnter && onEnter(el, () => endTransition());
