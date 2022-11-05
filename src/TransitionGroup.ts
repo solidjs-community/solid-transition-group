@@ -60,13 +60,13 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
   const classnames = createMemo(() => {
     const name = props.name || "s";
     return {
-      enterActiveClass: name + "-enter-active",
-      enterClass: name + "-enter",
-      enterToClass: name + "-enter-to",
-      exitActiveClass: name + "-exit-active",
-      exitClass: name + "-exit",
-      exitToClass: name + "-exit-to",
-      moveClass: name + "-move"
+      enterActiveClass: props.enterActiveClass || name + "-enter-active",
+      enterClass: props.enterClass || name + "-enter",
+      enterToClass: props.enterToClass || name + "-enter-to",
+      exitActiveClass: props.exitActiveClass || name + "-exit-active",
+      exitClass: props.exitClass || name + "-exit",
+      exitToClass: props.exitToClass || name + "-exit-to",
+      moveClass: props.moveClass || name + "-move"
     };
   });
   const { onBeforeEnter, onEnter, onAfterEnter, onBeforeExit, onExit, onAfterExit } = props;
