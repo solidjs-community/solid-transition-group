@@ -74,7 +74,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
   let p: Element[] = [];
   let first = true;
   createComputed(() => {
-    const c = resolved() as Element[];
+    const c = resolved.toArray() as Element[];
     const comb = [...c];
     const next = new Set(c);
     const prev = new Set(p);
