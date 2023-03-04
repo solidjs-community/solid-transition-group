@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "dev": "vite serve dev",
-    "build": "rollup -c && tsc",
+    "build": "rollup -c && tsc -p tsconfig.build.json",
     "format": "prettier -w **/*.{js,ts,json,css,tsx,jsx} --ignore-path .gitignore",
     "prepublishOnly": "pnpm run build"
   },

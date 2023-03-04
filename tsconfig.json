@@ -1,13 +1,10 @@
 {
   "compilerOptions": {
-    "emitDeclarationOnly": true,
-    "declaration": true,
     "target": "ESNext",
-    "module": "ESNext",
     "newLine": "LF",
     "moduleResolution": "node",
+    "noEmit": true,
     "strict": true,
-    "outDir": "./types",
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "preserve",
