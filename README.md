@@ -14,17 +14,16 @@ Animations aren't always smooth under rapid input still working on improving.
 
 ```bash
 npm install solid-transition-group
-```
-
-OR
-
-```bash
+# or
 yarn add solid-transition-group
+# or
+pnpm add solid-transition-group
 ```
 
 ## Transition
 
 Props:
+
 - name - string Used to automatically generate transition CSS class names. e.g. name: 'fade' will auto expand to .fade-enter, .fade-enter-active, etc.
 - appear - boolean, Whether to apply transition on initial render. Defaults to false.
 - mode - string Controls the timing sequence of leaving/entering transitions. Available modes are "out-in" and "in-out"; defaults to simultaneous.
@@ -36,6 +35,7 @@ Props:
 - exitToClass?: string;
 
 Events:
+
 - onBeforeEnter?: (el: Element) => void;
 - onEnter?: (el: Element, done: () => void) => void;
 - onAfterEnter?: (el: Element) => void;
@@ -73,11 +73,12 @@ Usage:
 
 Props:
 
-* moveClass - overwrite CSS class applied during moving transition.
-* exposes the same props as `<Transition>` except mode, appear.
+- moveClass - overwrite CSS class applied during moving transition.
+- exposes the same props as `<Transition>` except mode, appear.
 
 Events:
-* exposes the same events as `<Transition>`.
+
+- exposes the same events as `<Transition>`.
 
 Usage:
 `<TransitionGroup>` serve as transition effects for multiple elements/components.
@@ -87,9 +88,7 @@ Usage:
 ```jsx
 <ul>
   <TransitionGroup name="slide">
-    <For each={state.items}>{
-      item => <li>{item.text}</li>
-    }</For>
+    <For each={state.items}>{item => <li>{item.text}</li>}</For>
   </TransitionGroup>
 </ul>
 ```

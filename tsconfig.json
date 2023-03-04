@@ -2,14 +2,17 @@
   "compilerOptions": {
     "emitDeclarationOnly": true,
     "declaration": true,
-    "target": "esnext",
+    "target": "ESNext",
+    "module": "ESNext",
     "newLine": "LF",
     "moduleResolution": "node",
     "strict": true,
-    "outDir": "./types"
+    "outDir": "./types",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
   },
-  "include": [
-    "./src"
-  ],
-  "exclude": ["node_modules/"]
+  "include": ["src", "dev"],
+  "exclude": ["node_modules", "**/dist/**/*"]
 }

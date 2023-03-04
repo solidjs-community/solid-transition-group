@@ -9,6 +9,8 @@
     "type": "git",
     "url": "https://github.com/solidjs/solid-transition-group"
   },
+  "sideEffects": false,
+  "private": false,
   "type": "module",
   "main": "dist/solid-transition-group.cjs",
   "module": "dist/solid-transition-group.js",
@@ -17,21 +19,26 @@
     "dist",
     "types"
   ],
-  "sideEffects": "false",
   "scripts": {
+    "dev": "vite serve dev",
     "build": "rollup -c && tsc",
-    "prepublishOnly": "npm run build"
+    "format": "prettier -w **/*.{js,ts,json,css,tsx,jsx} --ignore-path .gitignore",
+    "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.16",
-    "@babel/preset-typescript": "^7.13.0",
-    "@rollup/plugin-babel": "5.3.0",
-    "@rollup/plugin-node-resolve": "11.2.1",
-    "rollup": "^2.45.1",
-    "solid-js": "^1.5.0",
-    "typescript": "^4.9.4"
+    "@babel/core": "^7.21.0",
+    "@babel/preset-typescript": "^7.21.0",
+    "@rollup/plugin-babel": "6.0.3",
+    "@rollup/plugin-node-resolve": "15.0.1",
+    "prettier": "^2.8.4",
+    "rollup": "^3.18.0",
+    "solid-js": "^1.6.11",
+    "typescript": "^4.9.5",
+    "vite": "^4.1.4",
+    "vite-plugin-solid": "^2.6.1"
   },
   "peerDependencies": {
     "solid-js": "^1.5.0"
-  }
+  },
+  "packageManager": "pnpm@7.24.0"
 }
