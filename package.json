@@ -40,5 +40,9 @@
   "peerDependencies": {
     "solid-js": "^1.5.0"
   },
-  "packageManager": "pnpm@7.24.0"
+  "packageManager": "pnpm@7.24.0",
+  "dependencies": {
+    "@solid-primitives/refs": "^1.0.0",
+    "@solid-primitives/transition-group": "^1.0.0"
+  }
 }

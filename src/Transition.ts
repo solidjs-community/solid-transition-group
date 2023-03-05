@@ -1,14 +1,7 @@
-import {
-  createSignal,
-  createComputed,
-  untrack,
-  batch,
-  Component,
-  children,
-  JSX,
-  createMemo
-} from "solid-js";
+import { Component, JSX, createMemo } from "solid-js";
 import { nextFrame } from "./utils";
+import { TransitionMode, createSwitchTransition } from "@solid-primitives/transition-group";
+import { resolveFirst } from "@solid-primitives/refs";
 
 type TransitionProps = {
   name?: string;
@@ -29,106 +22,92 @@ type TransitionProps = {
   mode?: "inout" | "outin";
 };
 
-export const Transition: Component<TransitionProps> = props => {
-  let el: Element;
-  let first = true;
-  const [s1, set1] = createSignal<Element | undefined>();
-  const [s2, set2] = createSignal<Element | undefined>();
-  const resolved = children(() => props.children);
+const TransitionModeMap = new Map<TransitionProps["mode"], TransitionMode>([
+  ["inout", "in-out"],
+  ["outin", "out-in"],
+  [undefined, "parallel"]
+]);
 
+export const Transition: Component<TransitionProps> = props => {
   const { onBeforeEnter, onEnter, onAfterEnter, onBeforeExit, onExit, onAfterExit } = props;
 
   const classnames = createMemo(() => {
     const name = props.name || "s";
     return {
-      enterActiveClass: props.enterActiveClass || name + "-enter-active",
-      enterClass: props.enterClass || name + "-enter",
-      enterToClass: props.enterToClass || name + "-enter-to",
-      exitActiveClass: props.exitActiveClass || name + "-exit-active",
-      exitClass: props.exitClass || name + "-exit",
-      exitToClass: props.exitToClass || name + "-exit-to"
+      enterActiveClass: (props.enterActiveClass || name + "-enter-active").split(" "),
+      enterClass: (props.enterClass || name + "-enter").split(" "),
+      enterToClass: (props.enterToClass || name + "-enter-to").split(" "),
+      exitActiveClass: (props.exitActiveClass || name + "-exit-active").split(" "),
+      exitClass: (props.exitClass || name + "-exit").split(" "),
+      exitToClass: (props.exitToClass || name + "-exit-to").split(" ")
     };
   });
 
-  function enterTransition(el: Element, prev: Element | undefined) {
-    if (!first || props.appear) {
-      const enterClasses = classnames().enterClass!.split(" ");
-      const enterActiveClasses = classnames().enterActiveClass!.split(" ");
-      const enterToClasses = classnames().enterToClass!.split(" ");
-      onBeforeEnter && onBeforeEnter(el);
-      el.classList.add(...enterClasses);
-      el.classList.add(...enterActiveClasses);
-      nextFrame(() => {
-        el.classList.remove(...enterClasses);
-        el.classList.add(...enterToClasses);
-        onEnter && onEnter(el, () => endTransition());
-        if (!onEnter || onEnter.length < 2) {
+  return createSwitchTransition(
+    resolveFirst(() => props.children),
+    {
+      mode: TransitionModeMap.get(props.mode),
+      appear: props.appear,
+      onEnter(el, done) {
+        const { enterClass, enterActiveClass, enterToClass } = classnames();
+
+        onBeforeEnter && onBeforeEnter(el);
+
+        el.classList.add(...enterClass);
+        el.classList.add(...enterActiveClass);
+        nextFrame(() => {
+          el.classList.remove(...enterClass);
+          el.classList.add(...enterToClass);
+
+          onEnter && onEnter(el, () => endTransition());
+          if (!onEnter || onEnter.length < 2) {
+            el.addEventListener("transitionend", endTransition);
+            el.addEventListener("animationend", endTransition);
+          }
+        });
+
+        function endTransition(e?: Event) {
+          if (el && (!e || e.target === el)) {
+            el.removeEventListener("transitionend", endTransition);
+            el.removeEventListener("animationend", endTransition);
+            el.classList.remove(...enterActiveClass);
+            el.classList.remove(...enterToClass);
+            done();
+            onAfterEnter && onAfterEnter(el);
+          }
+        }
+      },
+      onExit(el, done) {
+        const { exitClass, exitActiveClass, exitToClass } = classnames();
+
+        if (!el.parentNode) return endTransition();
+
+        onBeforeExit && onBeforeExit(el);
+
+        el.classList.add(...exitClass);
+        el.classList.add(...exitActiveClass);
+        nextFrame(() => {
+          el.classList.remove(...exitClass);
+          el.classList.add(...exitToClass);
+        });
+
+        onExit && onExit(el, () => endTransition());
+        if (!onExit || onExit.length < 2) {
           el.addEventListener("transitionend", endTransition);
           el.addEventListener("animationend", endTransition);
         }
-      });
 
-      function endTransition(e?: Event) {
-        if (el && (!e || e.target === el)) {
-          el.removeEventListener("transitionend", endTransition);
-          el.removeEventListener("animationend", endTransition);
-          el.classList.remove(...enterActiveClasses);
-          el.classList.remove(...enterToClasses);
-          batch(() => {
-            s1() !== el && set1(el);
-            s2() === el && set2(undefined);
-          });
-          onAfterEnter && onAfterEnter(el);
-          if (props.mode === "inout") exitTransition(el, prev!);
+        function endTransition(e?: Event) {
+          if (!e || e.target === el) {
+            el.removeEventListener("transitionend", endTransition);
+            el.removeEventListener("animationend", endTransition);
+            el.classList.remove(...exitActiveClass);
+            el.classList.remove(...exitToClass);
+            done();
+            onAfterExit && onAfterExit(el);
+          }
         }
       }
     }
-    prev && !props.mode ? set2(el) : set1(el);
-  }
-
-  function exitTransition(el: Element, prev: Element) {
-    const exitClasses = classnames().exitClass!.split(" ");
-    const exitActiveClasses = classnames().exitActiveClass!.split(" ");
-    const exitToClasses = classnames().exitToClass!.split(" ");
-    if (!prev.parentNode) return endTransition();
-    onBeforeExit && onBeforeExit(prev);
-    prev.classList.add(...exitClasses);
-    prev.classList.add(...exitActiveClasses);
-    nextFrame(() => {
-      prev.classList.remove(...exitClasses);
-      prev.classList.add(...exitToClasses);
-    });
-    onExit && onExit(prev, () => endTransition());
-    if (!onExit || onExit.length < 2) {
-      prev.addEventListener("transitionend", endTransition);
-      prev.addEventListener("animationend", endTransition);
-    }
-
-    function endTransition(e?: Event) {
-      if (!e || e.target === prev) {
-        prev.removeEventListener("transitionend", endTransition);
-        prev.removeEventListener("animationend", endTransition);
-        prev.classList.remove(...exitActiveClasses);
-        prev.classList.remove(...exitToClasses);
-        s1() === prev && set1(undefined);
-        onAfterExit && onAfterExit(prev);
-        if (props.mode === "outin") enterTransition(el, prev);
-      }
-    }
-  }
-
-  createComputed<Element>(prev => {
-    el = resolved() as Element;
-    while (typeof el === "function") el = (el as Function)();
-    return untrack(() => {
-      if (el && el !== prev) {
-        if (props.mode !== "outin") enterTransition(el, prev);
-        else if (first) set1(el);
-      }
-      if (prev && prev !== el && props.mode !== "inout") exitTransition(el, prev);
-      first = false;
-      return el;
-    });
-  });
-  return [s1, s2];
+  ) as unknown as JSX.Element;
 };

@@ -5,12 +5,18 @@ specifiers:
   '@babel/preset-typescript': ^7.21.0
   '@rollup/plugin-babel': 6.0.3
   '@rollup/plugin-node-resolve': 15.0.1
+  '@solid-primitives/refs': ^1.0.0
+  '@solid-primitives/transition-group': ^1.0.0
   prettier: ^2.8.4
   rollup: ^3.18.0
   solid-js: ^1.6.11
   typescript: ^4.9.5
   vite: ^4.1.4
   vite-plugin-solid: ^2.6.1
+
+dependencies:
+  '@solid-primitives/refs': 1.0.0_solid-js@1.6.11
+  '@solid-primitives/transition-group': 1.0.0_solid-js@1.6.11
 
 devDependencies:
   '@babel/core': 7.21.0
@@ -631,6 +637,31 @@ packages:
       rollup: 3.18.0
     dev: true
 
+  /@solid-primitives/refs/1.0.0_solid-js@1.6.11:
+    resolution: {integrity: sha512-eoX2UNSIGIFniuf7bbq7vPdl7QxNL/vxHQFxbXaqtFpvPaLDHRNLzYOO3xai24D8U63Vmg1Wresysia9B35mXw==}
+    peerDependencies:
+      solid-js: ^1.6.0
+    dependencies:
+      '@solid-primitives/utils': 5.4.0_solid-js@1.6.11
+      solid-js: 1.6.11
+    dev: false
+
+  /@solid-primitives/transition-group/1.0.0_solid-js@1.6.11:
+    resolution: {integrity: sha512-/k4nBZca6gpGsUUPVAUGNowRbQuod8FwGlh1fhr4teQHyFIDNUFUiA74XUwPf49BAHDdCYsNEJo6eDizrXUh1w==}
+    peerDependencies:
+      solid-js: ^1.6.0
+    dependencies:
+      solid-js: 1.6.11
+    dev: false
+
+  /@solid-primitives/utils/5.4.0_solid-js@1.6.11:
+    resolution: {integrity: sha512-cSya9Tnh8KW6OYtJbZYs3//CVWWQAOXhMckH9paSzMQcoM09P+R1lLUN9BhQOws4c6PMA0apPNrbWsQzqZzIEw==}
+    peerDependencies:
+      solid-js: ^1.6.0
+    dependencies:
+      solid-js: 1.6.11
+    dev: false
+
   /@types/babel__core/7.20.0:
     resolution: {integrity: sha512-+n8dL/9GWblDO0iU6eZAwEIJVr5DWigtle+Q6HLOrh/pdbXOhOtqzq8VPPE2zvNJzSKY4vH/z3iT3tn0A3ypiQ==}
     dependencies:
@@ -742,7 +773,6 @@ packages:
 
   /csstype/3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
-    dev: true
 
   /debug/4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -966,7 +996,6 @@ packages:
     resolution: {integrity: sha512-JquQQHPArGq+i2PLURxJ99Pcz2/1docpbycSio/cKSA0SeI3z5zRjy0TNcH4NRYvbOLrcini+iovXwnexKabyw==}
     dependencies:
       csstype: 3.1.1
-    dev: true
 
   /solid-refresh/0.5.1_solid-js@1.6.11:
     resolution: {integrity: sha512-kzfcoUYW6ZOUvk/7trfRbwLLBkQmMT2kGJUy9UMPnniMRYaMmyckjCxg1GuXCoSkrC3Bu2NK39I3iPJZYfqDXw==}
