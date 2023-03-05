@@ -1,5 +1,4 @@
 import { For, Match, Switch, createSignal } from "solid-js";
-import { render } from "solid-js/web";
 import { Transition, TransitionGroup } from "../src";
 
 function shuffle<T extends any[]>(array: T): T {
@@ -114,4 +113,4 @@ const App = () => {
   );
 };
 
-render(() => <App />, document.getElementById("app")!);
+export default App;
