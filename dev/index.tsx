@@ -107,7 +107,7 @@ const App = () => {
         Shuffle
       </button>
       <br />
-      <TransitionGroup name="list-item">
+      <TransitionGroup name="list-item" appear>
         <For each={numList()}>{r => <span class="list-item">{r}</span>}</For>
       </TransitionGroup>
     </>

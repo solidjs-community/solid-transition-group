@@ -1,9 +1,9 @@
-import { Component, JSX, createMemo } from "solid-js";
-import { nextFrame } from "./utils";
+import { FlowComponent, JSX } from "solid-js";
+import { createClassnames, nextFrame } from "./utils";
 import { TransitionMode, createSwitchTransition } from "@solid-primitives/transition-group";
 import { resolveFirst } from "@solid-primitives/refs";
 
-type TransitionProps = {
+export type TransitionProps = {
   name?: string;
   enterActiveClass?: string;
   enterClass?: string;
@@ -17,31 +17,19 @@ type TransitionProps = {
   onBeforeExit?: (el: Element) => void;
   onExit?: (el: Element, done: () => void) => void;
   onAfterExit?: (el: Element) => void;
-  children?: JSX.Element;
   appear?: boolean;
   mode?: "inout" | "outin";
 };
 
 const TransitionModeMap = new Map<TransitionProps["mode"], TransitionMode>([
   ["inout", "in-out"],
-  ["outin", "out-in"],
-  [undefined, "parallel"]
+  ["outin", "out-in"]
 ]);
 
-export const Transition: Component<TransitionProps> = props => {
+export const Transition: FlowComponent<TransitionProps> = props => {
   const { onBeforeEnter, onEnter, onAfterEnter, onBeforeExit, onExit, onAfterExit } = props;
 
-  const classnames = createMemo(() => {
-    const name = props.name || "s";
-    return {
-      enterActiveClass: (props.enterActiveClass || name + "-enter-active").split(" "),
-      enterClass: (props.enterClass || name + "-enter").split(" "),
-      enterToClass: (props.enterToClass || name + "-enter-to").split(" "),
-      exitActiveClass: (props.exitActiveClass || name + "-exit-active").split(" "),
-      exitClass: (props.exitClass || name + "-exit").split(" "),
-      exitToClass: (props.exitToClass || name + "-exit-to").split(" ")
-    };
-  });
+  const classnames = createClassnames(props);
 
   return createSwitchTransition(
     resolveFirst(() => props.children),
@@ -49,15 +37,15 @@ export const Transition: Component<TransitionProps> = props => {
       mode: TransitionModeMap.get(props.mode),
       appear: props.appear,
       onEnter(el, done) {
-        const { enterClass, enterActiveClass, enterToClass } = classnames();
+        const { enterClasses, enterActiveClasses, enterToClasses } = classnames();
 
         onBeforeEnter && onBeforeEnter(el);
 
-        el.classList.add(...enterClass);
-        el.classList.add(...enterActiveClass);
+        el.classList.add(...enterClasses);
+        el.classList.add(...enterActiveClasses);
         nextFrame(() => {
-          el.classList.remove(...enterClass);
-          el.classList.add(...enterToClass);
+          el.classList.remove(...enterClasses);
+          el.classList.add(...enterToClasses);
 
           onEnter && onEnter(el, () => endTransition());
           if (!onEnter || onEnter.length < 2) {
@@ -70,25 +58,25 @@ export const Transition: Component<TransitionProps> = props => {
           if (el && (!e || e.target === el)) {
             el.removeEventListener("transitionend", endTransition);
             el.removeEventListener("animationend", endTransition);
-            el.classList.remove(...enterActiveClass);
-            el.classList.remove(...enterToClass);
+            el.classList.remove(...enterActiveClasses);
+            el.classList.remove(...enterToClasses);
             done();
             onAfterEnter && onAfterEnter(el);
           }
         }
       },
       onExit(el, done) {
-        const { exitClass, exitActiveClass, exitToClass } = classnames();
+        const { exitClasses, exitActiveClasses, exitToClasses } = classnames();
 
         if (!el.parentNode) return endTransition();
 
         onBeforeExit && onBeforeExit(el);
 
-        el.classList.add(...exitClass);
-        el.classList.add(...exitActiveClass);
+        el.classList.add(...exitClasses);
+        el.classList.add(...exitActiveClasses);
         nextFrame(() => {
-          el.classList.remove(...exitClass);
-          el.classList.add(...exitToClass);
+          el.classList.remove(...exitClasses);
+          el.classList.add(...exitToClasses);
         });
 
         onExit && onExit(el, () => endTransition());
@@ -101,8 +89,8 @@ export const Transition: Component<TransitionProps> = props => {
           if (!e || e.target === el) {
             el.removeEventListener("transitionend", endTransition);
             el.removeEventListener("animationend", endTransition);
-            el.classList.remove(...exitActiveClass);
-            el.classList.remove(...exitToClass);
+            el.classList.remove(...exitActiveClasses);
+            el.classList.remove(...exitToClasses);
             done();
             onAfterExit && onAfterExit(el);
           }
