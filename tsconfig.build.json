@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "target": "ESNext",
+    "newLine": "LF",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "strict": true,
+    "outDir": "./types"
+  },
+  "include": ["./src"],
+  "exclude": ["node_modules/"]
+}
