@@ -1,5 +1,4 @@
 import { For, Match, Switch, createSignal } from "solid-js";
-import { render } from "solid-js/web";
 import { Transition, TransitionGroup } from "../src";
 
 function shuffle<T extends any[]>(array: T): T {
@@ -107,11 +106,11 @@ const App = () => {
         Shuffle
       </button>
       <br />
-      <TransitionGroup name="list-item">
+      <TransitionGroup name="list-item" appear>
         <For each={numList()}>{r => <span class="list-item">{r}</span>}</For>
       </TransitionGroup>
     </>
   );
 };
 
-render(() => <App />, document.getElementById("app")!);
+export default App;

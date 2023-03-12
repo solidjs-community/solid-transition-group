@@ -1,12 +1,7 @@
-import {
-  createSignal,
-  createComputed,
-  createEffect,
-  createMemo,
-  Component,
-  children
-} from "solid-js";
-import { nextFrame } from "./utils";
+import { createEffect, JSX, FlowComponent } from "solid-js";
+import { createClassnames, nextFrame } from "./utils";
+import { createListTransition } from "@solid-primitives/transition-group";
+import { resolveElements } from "@solid-primitives/refs";
 
 type BoundingRect = {
   top: number;
@@ -38,7 +33,7 @@ function getRect(element: Element): BoundingRect {
   };
 }
 
-type TransitionGroupProps = {
+export type TransitionGroupProps = {
   name?: string;
   enterActiveClass?: string;
   enterClass?: string;
@@ -53,40 +48,28 @@ type TransitionGroupProps = {
   onBeforeExit?: (el: Element) => void;
   onExit?: (el: Element, done: () => void) => void;
   onAfterExit?: (el: Element) => void;
-  children?: any;
+  appear?: boolean;
 };
-export const TransitionGroup: Component<TransitionGroupProps> = props => {
-  const resolved = children(() => props.children);
-  const classnames = createMemo(() => {
-    const name = props.name || "s";
-    return {
-      enterActiveClass: props.enterActiveClass || name + "-enter-active",
-      enterClass: props.enterClass || name + "-enter",
-      enterToClass: props.enterToClass || name + "-enter-to",
-      exitActiveClass: props.exitActiveClass || name + "-exit-active",
-      exitClass: props.exitClass || name + "-exit",
-      exitToClass: props.exitToClass || name + "-exit-to",
-      moveClass: props.moveClass || name + "-move"
-    };
-  });
+
+export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
   const { onBeforeEnter, onEnter, onAfterEnter, onBeforeExit, onExit, onAfterExit } = props;
-  const [combined, setCombined] = createSignal<Element[]>();
-  let p: Element[] = [];
-  let first = true;
-  createComputed(() => {
-    const c = resolved.toArray() as Element[];
-    const comb = [...c];
-    const next = new Set(c);
-    const prev = new Set(p);
-    const enterClasses = classnames().enterClass!.split(" ");
-    const enterActiveClasses = classnames().enterActiveClass!.split(" ");
-    const enterToClasses = classnames().enterToClass!.split(" ");
-    const exitClasses = classnames().exitClass!.split(" ");
-    const exitActiveClasses = classnames().exitActiveClass!.split(" ");
-    const exitToClasses = classnames().exitToClass!.split(" ");
-    for (let i = 0; i < c.length; i++) {
-      const el = c[i];
-      if (!first && !prev.has(el)) {
+
+  const classnames = createClassnames(props);
+
+  const combined = createListTransition(resolveElements(() => props.children).toArray, {
+    appear: props.appear,
+    exitMethod: "keep-index",
+    onChange({ added, removed, finishRemoved }) {
+      const {
+        enterClasses,
+        enterActiveClasses,
+        enterToClasses,
+        exitClasses,
+        exitActiveClasses,
+        exitToClasses
+      } = classnames();
+
+      for (const el of added) {
         onBeforeEnter && onBeforeEnter(el);
         el.classList.add(...enterClasses);
         el.classList.add(...enterActiveClasses);
@@ -109,43 +92,38 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
           }
         }
       }
-    }
-    for (let i = 0; i < p.length; i++) {
-      const old = p[i];
-      if (!next.has(old) && old.parentNode) {
-        comb.splice(i, 0, old);
-        onBeforeExit && onBeforeExit(old);
-        old.classList.add(...exitClasses);
-        old.classList.add(...exitActiveClasses);
+
+      for (const el of removed) {
+        onBeforeExit && onBeforeExit(el);
+        el.classList.add(...exitClasses);
+        el.classList.add(...exitActiveClasses);
         nextFrame(() => {
-          old.classList.remove(...exitClasses);
-          old.classList.add(...exitToClasses);
+          el.classList.remove(...exitClasses);
+          el.classList.add(...exitToClasses);
         });
-        onExit && onExit(old, () => endTransition());
+        onExit && onExit(el, () => endTransition());
         if (!onExit || onExit.length < 2) {
-          old.addEventListener("transitionend", endTransition);
-          old.addEventListener("animationend", endTransition);
+          el.addEventListener("transitionend", endTransition);
+          el.addEventListener("animationend", endTransition);
         }
 
         function endTransition(e?: Event) {
-          if (!e || e.target === old) {
-            old.removeEventListener("transitionend", endTransition);
-            old.removeEventListener("animationend", endTransition);
-            old.classList.remove(...exitActiveClasses);
-            old.classList.remove(...exitToClasses);
-            onAfterExit && onAfterExit(old);
-            p = p.filter(i => i !== old);
-            setCombined(p);
+          if (!e || e.target === el) {
+            el.removeEventListener("transitionend", endTransition);
+            el.removeEventListener("animationend", endTransition);
+            el.classList.remove(...exitActiveClasses);
+            el.classList.remove(...exitToClasses);
+            onAfterExit && onAfterExit(el);
+            finishRemoved([el]);
           }
         }
       }
     }
-    p = comb;
-    setCombined(comb);
   });
 
+  let first = !props.appear;
   createEffect<Map<Element, ElementInfo>>(nodes => {
-    const c = combined()!;
+    const c = combined();
     c.forEach(child => {
       let n: ElementInfo | undefined;
       if (!(n = nodes!.get(child))) {
@@ -190,7 +168,7 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
       if (c.moved) {
         c.moved = false;
         const s = (child as HTMLElement | SVGElement).style;
-        const moveClasses = classnames().moveClass!.split(" ");
+        const { moveClasses } = classnames();
         child.classList.add(...moveClasses);
         s.transform = s.transitionDuration = "";
         function endTransition(e: TransitionEvent) {
@@ -211,5 +189,6 @@ export const TransitionGroup: Component<TransitionGroupProps> = props => {
     });
     return nodes!;
   }, new Map());
-  return combined;
+
+  return combined as unknown as JSX.Element;
 };

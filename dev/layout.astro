@@ -1,0 +1,27 @@
+---
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/">Client only</a></li>
+        <li><a href="/idle">Hydrate on idle</a></li>
+        <li><a href="/no-hydration">No hydration</a></li>
+      </ul>
+    </nav>
+    <main>
+      <h1>{title}</h1>
+      <slot />
+    </main>
+  </body>
+</html>

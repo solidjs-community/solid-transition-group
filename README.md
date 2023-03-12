@@ -74,7 +74,7 @@ Usage:
 Props:
 
 - moveClass - overwrite CSS class applied during moving transition.
-- exposes the same props as `<Transition>` except mode, appear.
+- exposes the same props as `<Transition>` except mode.
 
 Events:
 
