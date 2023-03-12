@@ -41,12 +41,12 @@ Events:
 
 | Name             | Type                                            | Description                                               |
 | ---------------- | ----------------------------------------------- | --------------------------------------------------------- |
-| `onBeforeEnter`  | `(el: Element) => void`                         | Function called before the entering transition starts. (before enter classes are applied) |
-| `onEnter`        | `(el: Element, done: () => void) => void`       | Function called when the entering transition starts. (after `enterToClass` class is applied) |
-| `onAfterEnter`   | `(el: Element) => void`                         | Function called after the entering transition ends. (after all enter classes are removed) |
-| `onBeforeExit`   | `(el: Element) => void`                         | Function called before the leaving transition starts. (before exit classes are applied) |
-| `onExit`         | `(el: Element, done: () => void) => void`       | Function called when the leaving transition starts. (after `exitToClass` class is applied) |
-| `onAfterExit`    | `(el: Element) => void`                         | Function called after the leaving transition ends. (after all enter classes are removed) |
+| `onBeforeEnter`  | `(el: Element) => void`                         | Function called before the enter transition starts. (before enter classes are applied) |
+| `onEnter`        | `(el: Element, done: () => void) => void`       | Function called when the enter transition starts. (after `enterToClass` class is applied) |
+| `onAfterEnter`   | `(el: Element) => void`                         | Function called after the enter transition ends. (after all enter classes are removed) |
+| `onBeforeExit`   | `(el: Element) => void`                         | Function called before the exit transition starts. (before exit classes are applied) |
+| `onExit`         | `(el: Element, done: () => void) => void`       | Function called when the exit transition starts. (after `exitToClass` class is applied) |
+| `onAfterExit`    | `(el: Element) => void`                         | Function called after the exit transition ends. (after all exit classes are removed) |
 
 
 Usage:
