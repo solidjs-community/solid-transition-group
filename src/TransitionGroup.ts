@@ -2,6 +2,7 @@ import { createEffect, JSX, FlowComponent } from "solid-js";
 import { createClassnames, nextFrame } from "./utils";
 import { createListTransition } from "@solid-primitives/transition-group";
 import { resolveElements } from "@solid-primitives/refs";
+import type { TransitionProps } from "./Transition";
 
 type BoundingRect = {
   top: number;
@@ -33,22 +34,12 @@ function getRect(element: Element): BoundingRect {
   };
 }
 
-export type TransitionGroupProps = {
-  name?: string;
-  enterActiveClass?: string;
-  enterClass?: string;
-  enterToClass?: string;
-  exitActiveClass?: string;
-  exitClass?: string;
-  exitToClass?: string;
+export type TransitionGroupProps = Omit<TransitionProps, "mode"> & {
+  /**
+   * CSS class applied to the moving elements for the entire duration of the move transition.
+   * Defaults to `"s-move"`.
+   */
   moveClass?: string;
-  onBeforeEnter?: (el: Element) => void;
-  onEnter?: (el: Element, done: () => void) => void;
-  onAfterEnter?: (el: Element) => void;
-  onBeforeExit?: (el: Element) => void;
-  onExit?: (el: Element, done: () => void) => void;
-  onAfterExit?: (el: Element) => void;
-  appear?: boolean;
 };
 
 export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
