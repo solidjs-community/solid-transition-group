@@ -24,24 +24,30 @@ pnpm add solid-transition-group
 
 Props:
 
-- name - string Used to automatically generate transition CSS class names. e.g. name: 'fade' will auto expand to .fade-enter, .fade-enter-active, etc.
-- appear - boolean, Whether to apply transition on initial render. Defaults to false.
-- mode - string Controls the timing sequence of leaving/entering transitions. Available modes are "out-in" and "in-out"; defaults to simultaneous.
-- enterActiveClass?: string;
-- enterClass?: string;
-- enterToClass?: string;
-- exitActiveClass?: string;
-- exitClass?: string;
-- exitToClass?: string;
+| Name             | Type                     | Description                                                                                           |
+| ---------------- | ------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `name`           | `string`                 | Used to automatically generate transition CSS class names. e.g. `name: 'fade'` will auto expand to `.fade-enter`, `.fade-enter-active`, etc. Defaults to `"s"`. |
+| `appear`         | `boolean`                | Whether to apply transition on initial render. Defaults to `false`.                                    |
+| `mode`           | `"inout" \| "outin" \| undefined`                 | Controls the timing sequence of leaving/entering transitions. Available modes are `"outin"` and `"inout"`; defaults to simultaneous. |
+| `enterActiveClass`| `string`      | CSS class applied to the entering element for the entire duration of the enter transition.                               |
+| `enterClass`     | `string`      | CSS class applied to the entering element at the start of the enter transition, and removed the frame after.                  |
+| `enterToClass`   | `string`      | CSS class applied to the entering element after the enter transition starts.                             |
+| `exitActiveClass`| `string`      | CSS class applied to the exiting element for the entire duration of the exit transition.    |
+| `exitClass`      | `string`      | CSS class applied to the exiting element at the start of the exit transition, and removed the frame after.                                                  |
+| `exitToClass`    | `string`      | CSS class applied to the exiting element after the exit transition starts.                              |
+
 
 Events:
 
-- onBeforeEnter?: (el: Element) => void;
-- onEnter?: (el: Element, done: () => void) => void;
-- onAfterEnter?: (el: Element) => void;
-- onBeforeExit?: (el: Element) => void;
-- onExit?: (el: Element, done: () => void) => void;
-- onAfterExit?: (el: Element) => void;
+| Name             | Type                                            | Description                                               |
+| ---------------- | ----------------------------------------------- | --------------------------------------------------------- |
+| `onBeforeEnter`  | `(el: Element) => void`                         | Function called before the entering transition starts. (before enter classes are applied) |
+| `onEnter`        | `(el: Element, done: () => void) => void`       | Function called when the entering transition starts. (after `enterToClass` class is applied) |
+| `onAfterEnter`   | `(el: Element) => void`                         | Function called after the entering transition ends. (after all enter classes are removed) |
+| `onBeforeExit`   | `(el: Element) => void`                         | Function called before the leaving transition starts. (before exit classes are applied) |
+| `onExit`         | `(el: Element, done: () => void) => void`       | Function called when the leaving transition starts. (after `exitToClass` class is applied) |
+| `onAfterExit`    | `(el: Element) => void`                         | Function called after the leaving transition ends. (after all enter classes are removed) |
+
 
 Usage:
 `<Transition>` serve as transition effects for single element/component. The `<Transition>` only applies the transition behavior to the wrapped content inside; it doesn't render an extra DOM element, or show up in the inspected component hierarchy.
@@ -74,7 +80,7 @@ Usage:
 Props:
 
 - moveClass - overwrite CSS class applied during moving transition.
-- exposes the same props as `<Transition>` except mode.
+- exposes the same props as `<Transition>` except `mode`.
 
 Events:
 
