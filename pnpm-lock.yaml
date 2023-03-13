@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@astrojs/solid-js': ^2.0.2
+  '@release-it/keep-a-changelog': ^3.1.0
   '@solid-primitives/refs': ^1.0.0
   '@solid-primitives/transition-group': ^1.0.0
   astro: ^2.0.17
@@ -17,6 +18,7 @@ dependencies:
 
 devDependencies:
   '@astrojs/solid-js': 2.0.2_solid-js@1.6.11
+  '@release-it/keep-a-changelog': 3.1.0_release-it@15.8.0
   astro: 2.0.17
   prettier: 2.8.4
   release-it: 15.8.0
@@ -994,6 +996,17 @@ packages:
       config-chain: 1.1.13
     dev: true
 
+  /@release-it/keep-a-changelog/3.1.0_release-it@15.8.0:
+    resolution: {integrity: sha512-o8lxZCAFwFkFpo88aIIgS5dR3kDy6yLjJVpe9QAGNY6tpKMMRHxsiJ8MS5NvrEeIC2VTzOoOjN/CDvdd3a4+/A==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      release-it: ^15.0.0-esm.4
+    dependencies:
+      detect-newline: 4.0.0
+      release-it: 15.8.0
+      string-template: 1.0.0
+    dev: true
+
   /@sindresorhus/is/5.3.0:
     resolution: {integrity: sha512-CX6t4SYQ37lzxicAqsBtxA3OseeoVrh9cSJ5PFYam0GksYlupRfy1A+Q4aYD3zvcfECLc0zO2u+ZnR2UYKvCrw==}
     engines: {node: '>=14.16'}
@@ -1793,6 +1806,11 @@ packages:
   /dequal/2.0.3:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
     engines: {node: '>=6'}
+    dev: true
+
+  /detect-newline/4.0.0:
+    resolution: {integrity: sha512-1aXUEPdfGdzVPFpzGJJNgq9o81bGg1s09uxTWsqBlo9PI332uyJRQq13+LK/UN4JfxJbFdCXonUFQ9R/p7yCtw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dev: true
 
   /devalue/4.3.0:
@@ -4634,6 +4652,10 @@ packages:
   /streamsearch/1.1.0:
     resolution: {integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==}
     engines: {node: '>=10.0.0'}
+    dev: true
+
+  /string-template/1.0.0:
+    resolution: {integrity: sha512-SLqR3GBUXuoPP5MmYtD7ompvXiG87QjT6lzOszyXjTM86Uu7At7vNnt2xgyTLq5o9T4IxTYFyGxcULqpsmsfdg==}
     dev: true
 
   /string-width/4.2.3:
