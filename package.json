@@ -23,6 +23,7 @@
     "dev": "astro dev --root dev",
     "build": "rollup -c && tsc -p tsconfig.build.json",
     "format": "prettier -w **/*.{js,ts,json,css,tsx,jsx} --ignore-path .gitignore",
+    "release": "release-it",
     "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
@@ -33,6 +34,7 @@
     "@rollup/plugin-node-resolve": "15.0.1",
     "astro": "^2.0.17",
     "prettier": "^2.8.4",
+    "release-it": "^15.8.0",
     "rollup": "^3.18.0",
     "solid-js": "^1.6.11",
     "typescript": "^4.9.5"
