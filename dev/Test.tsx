@@ -1,16 +1,85 @@
-import { For, Match, Switch, createSignal } from "solid-js";
+import { Component, For, Match, Show, Switch, createSignal } from "solid-js";
 import { Transition, TransitionGroup } from "../src";
+
+const getRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 
 function shuffle<T extends any[]>(array: T): T {
   return array.sort(() => Math.random() - 0.5);
 }
-let nextId = 10;
+
+const Group: Component = () => {
+  const [numList, setNumList] = createSignal([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+    randomIndex = () => Math.floor(Math.random() * numList().length);
+
+  let nextId = 10;
+
+  return (
+    <>
+      <button
+        onClick={() => {
+          const list = numList(),
+            idx = randomIndex();
+          setNumList([...list.slice(0, idx), nextId++, ...list.slice(idx)]);
+        }}
+      >
+        Add
+      </button>
+      <button
+        onClick={() => {
+          const list = numList(),
+            idx = randomIndex();
+          setNumList([...list.slice(0, idx), ...list.slice(idx + 1)]);
+        }}
+      >
+        Remove
+      </button>
+      <button
+        onClick={() => {
+          const randomList = shuffle(numList().slice());
+          setNumList(randomList);
+        }}
+      >
+        Shuffle
+      </button>
+      <br />
+      <TransitionGroup name="list-item" appear>
+        <For each={numList()}>{r => <span class="list-item">{r}</span>}</For>
+      </TransitionGroup>
+    </>
+  );
+};
+
+const Colors: Component = () => {
+  const [page, setPage] = createSignal(1);
+  return (
+    <>
+      <button onClick={() => setPage(p => ++p)}>Next</button>
+      <Transition
+        mode="outin"
+        onEnter={(el, done) => {
+          const a = el.animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: 800
+          });
+          a.finished.then(done);
+        }}
+        onExit={(el, done) => {
+          const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
+            duration: 800
+          });
+          a.finished.then(done);
+        }}
+      >
+        <Show when={page()} keyed>
+          {i => <div style={{ "background-color": getRandomColor(), padding: "2rem" }}>{i}.</div>}
+        </Show>
+      </Transition>
+    </>
+  );
+};
 
 const App = () => {
   const [show, toggleShow] = createSignal(true),
-    [select, setSelect] = createSignal(0),
-    [numList, setNumList] = createSignal([1, 2, 3, 4, 5, 6, 7, 8, 9]),
-    randomIndex = () => Math.floor(Math.random() * numList().length);
+    [select, setSelect] = createSignal(0);
 
   return (
     <>
@@ -61,6 +130,7 @@ const App = () => {
         )}
       </Transition>
       <br />
+
       <b>Switch OutIn</b>
       <br />
       <button onClick={() => setSelect((select() + 1) % 3)}>Next</button>
@@ -77,38 +147,16 @@ const App = () => {
           </Match>
         </Switch>
       </Transition>
+
       <b>Group</b>
       <br />
-      <button
-        onClick={() => {
-          const list = numList(),
-            idx = randomIndex();
-          setNumList([...list.slice(0, idx), nextId++, ...list.slice(idx)]);
-        }}
-      >
-        Add
-      </button>
-      <button
-        onClick={() => {
-          const list = numList(),
-            idx = randomIndex();
-          setNumList([...list.slice(0, idx), ...list.slice(idx + 1)]);
-        }}
-      >
-        Remove
-      </button>
-      <button
-        onClick={() => {
-          const randomList = shuffle(numList().slice());
-          setNumList(randomList);
-        }}
-      >
-        Shuffle
-      </button>
+      <Group />
       <br />
-      <TransitionGroup name="list-item" appear>
-        <For each={numList()}>{r => <span class="list-item">{r}</span>}</For>
-      </TransitionGroup>
+      <br />
+
+      <b>Colors</b>
+      <br />
+      <Colors />
     </>
   );
 };
