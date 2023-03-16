@@ -4,6 +4,10 @@
 
 # Solid Transition Group
 
+[![pnpm](https://img.shields.io/badge/maintained%20with-pnpm-cc00ff.svg?style=for-the-badge&logo=pnpm)](https://pnpm.io/)
+[![version](https://img.shields.io/npm/v/solid-transition-group?style=for-the-badge)](https://www.npmjs.com/package/solid-transition-group)
+[![downloads](https://img.shields.io/npm/dw/solid-transition-group?color=blue&style=for-the-badge)](https://www.npmjs.com/package/solid-transition-group)
+
 Animation library influenced by React Transition Group and Vue Transitions for the SolidJS library.
 
 Known limitation: Transition and Transition Group work on detecting changes on DOM children. Only supports single DOM child. Not Text or Fragments.
@@ -13,10 +17,11 @@ Animations aren't always smooth under rapid input still working on improving.
 ## Installation
 
 ```bash
+# npm
 npm install solid-transition-group
-# or
+# yarn
 yarn add solid-transition-group
-# or
+# pnpm
 pnpm add solid-transition-group
 ```
 
