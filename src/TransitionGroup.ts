@@ -1,5 +1,5 @@
 import { createEffect, JSX, FlowComponent } from "solid-js";
-import { createClassnames, nextFrame } from "./utils";
+import { createClassnames, enterTransition, exitTransition } from "./common";
 import { createListTransition } from "@solid-primitives/transition-group";
 import { resolveElements } from "@solid-primitives/refs";
 import type { TransitionProps } from "./Transition";
@@ -43,71 +43,17 @@ export type TransitionGroupProps = Omit<TransitionProps, "mode"> & {
 };
 
 export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
-  const { onBeforeEnter, onEnter, onAfterEnter, onBeforeExit, onExit, onAfterExit } = props;
-
   const classnames = createClassnames(props);
 
   const combined = createListTransition(resolveElements(() => props.children).toArray, {
     appear: props.appear,
     exitMethod: "keep-index",
     onChange({ added, removed, finishRemoved }) {
-      const {
-        enterClasses,
-        enterActiveClasses,
-        enterToClasses,
-        exitClasses,
-        exitActiveClasses,
-        exitToClasses
-      } = classnames();
-
       for (const el of added) {
-        onBeforeEnter && onBeforeEnter(el);
-        el.classList.add(...enterClasses);
-        el.classList.add(...enterActiveClasses);
-        nextFrame(() => {
-          el.classList.remove(...enterClasses);
-          el.classList.add(...enterToClasses);
-          onEnter && onEnter(el, () => endTransition());
-          if (!onEnter || onEnter.length < 2) {
-            el.addEventListener("transitionend", endTransition);
-            el.addEventListener("animationend", endTransition);
-          }
-        });
-        function endTransition(e?: Event) {
-          if (el && (!e || e.target === el)) {
-            el.removeEventListener("transitionend", endTransition);
-            el.removeEventListener("animationend", endTransition);
-            el.classList.remove(...enterActiveClasses);
-            el.classList.remove(...enterToClasses);
-            onAfterEnter && onAfterEnter(el);
-          }
-        }
+        enterTransition(classnames, props, el);
       }
-
       for (const el of removed) {
-        onBeforeExit && onBeforeExit(el);
-        el.classList.add(...exitClasses);
-        el.classList.add(...exitActiveClasses);
-        nextFrame(() => {
-          el.classList.remove(...exitClasses);
-          el.classList.add(...exitToClasses);
-        });
-        onExit && onExit(el, () => endTransition());
-        if (!onExit || onExit.length < 2) {
-          el.addEventListener("transitionend", endTransition);
-          el.addEventListener("animationend", endTransition);
-        }
-
-        function endTransition(e?: Event) {
-          if (!e || e.target === el) {
-            el.removeEventListener("transitionend", endTransition);
-            el.removeEventListener("animationend", endTransition);
-            el.classList.remove(...exitActiveClasses);
-            el.classList.remove(...exitToClasses);
-            onAfterExit && onAfterExit(el);
-            finishRemoved([el]);
-          }
-        }
+        exitTransition(classnames, props, el, () => finishRemoved([el]));
       }
     }
   });
