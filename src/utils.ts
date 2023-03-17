@@ -1,9 +1,10 @@
 import { createMemo } from "solid-js";
 
+// https://github.com/solidjs-community/solid-transition-group/issues/12
+// for the css transition be triggered properly on firefox
+// we need to wait for two frames before changeing classes
 export function nextFrame(fn: () => void) {
-  requestAnimationFrame(() => {
-    requestAnimationFrame(fn);
-  });
+  requestAnimationFrame(() => requestAnimationFrame(fn));
 }
 
 export function createClassnames(props: {

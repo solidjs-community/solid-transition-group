@@ -1,8 +1,6 @@
 import { Component, For, Match, Show, Switch, createSignal } from "solid-js";
 import { Transition, TransitionGroup } from "../src";
 
-const getRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-
 function shuffle<T extends any[]>(array: T): T {
   return array.sort(() => Math.random() - 0.5);
 }
@@ -49,25 +47,74 @@ const Group: Component = () => {
   );
 };
 
+const getRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
 const Colors: Component = () => {
   const [page, setPage] = createSignal(1);
+
+  /*
+
+  Expected output:
+
+  - before exit: true, ""
+  - exit: true, "s-exit s-exit-active"
+  - before enter: false, ""
+  - after exit: false, ""
+  - enter: true, "s-enter s-enter-active"
+  - 1 frame: true, "s-enter s-enter-active"
+  - 2 frame: true, "s-enter s-enter-active"
+  - 3 frame: true, "s-enter-active s-enter-to"
+  - after enter: true, ""
+
+  */
+
+  function onBeforeEnter(el: Element) {
+    console.log(`before enter: ${el.isConnected}, "${el.className}"`);
+    requestAnimationFrame(() => {
+      console.log(`1 frame: ${el.isConnected}, "${el.className}"`);
+      requestAnimationFrame(() => {
+        console.log(`2 frame: ${el.isConnected}, "${el.className}"`);
+        requestAnimationFrame(() => {
+          console.log(`3 frame: ${el.isConnected}, "${el.className}"`);
+        });
+      });
+    });
+  }
+  function onEnter(el: Element, done: VoidFunction) {
+    console.log(`enter: ${el.isConnected}, "${el.className}"`);
+    const a = el.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: 800
+    });
+    a.finished.then(done);
+  }
+  function onAfterEnter(el: Element) {
+    console.log(`after enter: ${el.isConnected}, "${el.className}"`);
+  }
+  function onBeforeExit(el: Element) {
+    console.log(`before exit: ${el.isConnected}, "${el.className}"`);
+  }
+  function onExit(el: Element, done: VoidFunction) {
+    console.log(`exit: ${el.isConnected}, "${el.className}"`);
+    const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: 800
+    });
+    a.finished.then(done);
+  }
+  function onAfterExit(el: Element) {
+    console.log(`after exit: ${el.isConnected}, "${el.className}"`);
+  }
+
   return (
     <>
       <button onClick={() => setPage(p => ++p)}>Next</button>
       <Transition
         mode="outin"
-        onEnter={(el, done) => {
-          const a = el.animate([{ opacity: 0 }, { opacity: 1 }], {
-            duration: 800
-          });
-          a.finished.then(done);
-        }}
-        onExit={(el, done) => {
-          const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
-            duration: 800
-          });
-          a.finished.then(done);
-        }}
+        onBeforeEnter={onBeforeEnter}
+        onEnter={onEnter}
+        onAfterEnter={onAfterEnter}
+        onBeforeExit={onBeforeExit}
+        onExit={onExit}
+        onAfterExit={onAfterExit}
       >
         <Show when={page()} keyed>
           {i => <div style={{ "background-color": getRandomColor(), padding: "2rem" }}>{i}.</div>}
@@ -107,15 +154,9 @@ const App = () => {
       <br />
       <b>Custom JS:</b>
       <Transition
-        onBeforeEnter={el => {
-          if (el instanceof HTMLElement) el.style.opacity = "0";
-        }}
         onEnter={(el, done) => {
           const a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600 });
           a.finished.then(done);
-        }}
-        onAfterEnter={el => {
-          if (el instanceof HTMLElement) el.style.opacity = "1";
         }}
         onExit={(el, done) => {
           const a = el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 600 });

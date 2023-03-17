@@ -1,6 +1,6 @@
 import { FlowComponent, JSX } from "solid-js";
 import { createClassnames, nextFrame } from "./utils";
-import { TransitionMode, createSwitchTransition } from "@solid-primitives/transition-group";
+import { createSwitchTransition } from "@solid-primitives/transition-group";
 import { resolveFirst } from "@solid-primitives/refs";
 
 export type TransitionProps = {
@@ -71,10 +71,10 @@ export type TransitionProps = {
   onAfterExit?: (el: Element) => void;
 };
 
-const TransitionModeMap = new Map<TransitionProps["mode"], TransitionMode>([
-  ["inout", "in-out"],
-  ["outin", "out-in"]
-]);
+const TRANSITION_MODE_MAP = {
+  inout: "in-out",
+  outin: "out-in"
+} as const;
 
 export const Transition: FlowComponent<TransitionProps> = props => {
   const { onBeforeEnter, onEnter, onAfterEnter, onBeforeExit, onExit, onAfterExit } = props;
@@ -84,20 +84,31 @@ export const Transition: FlowComponent<TransitionProps> = props => {
   return createSwitchTransition(
     resolveFirst(() => props.children),
     {
-      mode: TransitionModeMap.get(props.mode),
+      mode: TRANSITION_MODE_MAP[props.mode!],
       appear: props.appear,
       onEnter(el, done) {
         const { enterClasses, enterActiveClasses, enterToClasses } = classnames();
 
+        // before the elements are added to the DOM
         onBeforeEnter && onBeforeEnter(el);
 
         el.classList.add(...enterClasses);
         el.classList.add(...enterActiveClasses);
+
+        // after the microtask the elements will be added to the DOM
+        // and onEnter will be called in the same frame
+        queueMicrotask(() => {
+          // Don't animate element if it's not in the DOM
+          // This can happen when elements are changed under Suspense
+          if (!el.parentNode) return done();
+
+          onEnter && onEnter(el, () => endTransition());
+        });
+
         nextFrame(() => {
           el.classList.remove(...enterClasses);
           el.classList.add(...enterToClasses);
 
-          onEnter && onEnter(el, () => endTransition());
           if (!onEnter || onEnter.length < 2) {
             el.addEventListener("transitionend", endTransition);
             el.addEventListener("animationend", endTransition);
@@ -105,12 +116,12 @@ export const Transition: FlowComponent<TransitionProps> = props => {
         });
 
         function endTransition(e?: Event) {
-          if (el && (!e || e.target === el)) {
+          if (!e || e.target === el) {
             el.removeEventListener("transitionend", endTransition);
             el.removeEventListener("animationend", endTransition);
             el.classList.remove(...enterActiveClasses);
             el.classList.remove(...enterToClasses);
-            done();
+            done(); // starts exit transition in "in-out" mode
             onAfterEnter && onAfterEnter(el);
           }
         }
@@ -118,7 +129,9 @@ export const Transition: FlowComponent<TransitionProps> = props => {
       onExit(el, done) {
         const { exitClasses, exitActiveClasses, exitToClasses } = classnames();
 
-        if (!el.parentNode) return endTransition();
+        // Don't animate element if it's not in the DOM
+        // This can happen when elements are changed under Suspense
+        if (!el.parentNode) return done();
 
         onBeforeExit && onBeforeExit(el);
 
@@ -130,6 +143,7 @@ export const Transition: FlowComponent<TransitionProps> = props => {
         });
 
         onExit && onExit(el, () => endTransition());
+
         if (!onExit || onExit.length < 2) {
           el.addEventListener("transitionend", endTransition);
           el.addEventListener("animationend", endTransition);
@@ -141,7 +155,7 @@ export const Transition: FlowComponent<TransitionProps> = props => {
             el.removeEventListener("animationend", endTransition);
             el.classList.remove(...exitActiveClasses);
             el.classList.remove(...exitToClasses);
-            done();
+            done(); // removes element from DOM, starts enter transition in "out-in" mode
             onAfterExit && onAfterExit(el);
           }
         }
