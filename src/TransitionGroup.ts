@@ -23,7 +23,11 @@ type ElementInfo = {
 function getRect(element: Element): BoundingRect {
   const { top, bottom, left, right, width, height } = element.getBoundingClientRect();
 
-  const parentRect = (element.parentNode! as Element).getBoundingClientRect();
+  const parentRect =
+    element.parentNode instanceof Element
+      ? element.parentNode.getBoundingClientRect()
+      : { top: 0, left: 0 };
+
   return {
     top: top - parentRect.top,
     bottom,
