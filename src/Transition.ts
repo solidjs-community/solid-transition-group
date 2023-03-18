@@ -32,6 +32,9 @@ export type TransitionEvents = {
   onAfterExit?: (el: Element) => void;
 };
 
+/**
+ * Props for the {@link Transition} component.
+ */
 export type TransitionProps = TransitionEvents & {
   /**
    * Used to automatically generate transition CSS class names.
@@ -79,6 +82,13 @@ const TRANSITION_MODE_MAP = {
   outin: "out-in"
 } as const;
 
+/**
+ * The `<Transition>` component lets you apply enter and leave animations on element passed to `props.children`.
+ *
+ * It only supports transitioning a single element at a time.
+ *
+ * @param props {@link TransitionProps}
+ */
 export const Transition: FlowComponent<TransitionProps> = props => {
   const classnames = createClassnames(props);
 

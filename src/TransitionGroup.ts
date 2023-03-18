@@ -4,23 +4,7 @@ import { createListTransition } from "@solid-primitives/transition-group";
 import { resolveElements } from "@solid-primitives/refs";
 import type { TransitionProps } from "./Transition";
 
-type BoundingRect = {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-  width: number;
-  height: number;
-};
-
-type ElementInfo = {
-  pos: BoundingRect;
-  newPos?: BoundingRect;
-  new?: boolean;
-  moved?: boolean;
-};
-
-function getRect(element: Element): BoundingRect {
+function getRect(element: Element) {
   const { top, bottom, left, right, width, height } = element.getBoundingClientRect();
 
   const parentRect =
@@ -38,6 +22,9 @@ function getRect(element: Element): BoundingRect {
   };
 }
 
+/**
+ * Props for the {@link TransitionGroup} component.
+ */
 export type TransitionGroupProps = Omit<TransitionProps, "mode"> & {
   /**
    * CSS class applied to the moving elements for the entire duration of the move transition.
@@ -46,6 +33,13 @@ export type TransitionGroupProps = Omit<TransitionProps, "mode"> & {
   moveClass?: string;
 };
 
+/**
+ * The `<TransitionGroup>` component lets you apply enter and leave animations on elements passed to `props.children`.
+ *
+ * It supports transitioning multiple elements at a time and moving elements around.
+ *
+ * @param props {@link TransitionGroupProps}
+ */
 export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
   const classnames = createClassnames(props);
 
@@ -63,74 +57,87 @@ export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
     }
   });
 
+  type ElementInfo = {
+    pos: ReturnType<typeof getRect>;
+    newPos?: ReturnType<typeof getRect>;
+    new?: boolean;
+    moved?: boolean;
+  };
+
   let first = !props.appear;
-  createEffect<Map<Element, ElementInfo>>(nodes => {
+  const elementInfoMap = new Map<Element, ElementInfo>();
+
+  createEffect(() => {
     const c = combined();
-    c.forEach(child => {
-      let n: ElementInfo | undefined;
-      if (!(n = nodes!.get(child))) {
-        nodes!.set(child, (n = { pos: getRect(child), new: !first }));
-      } else if (n.new) {
-        n.new = false;
-        n.newPos = getRect(child);
+
+    c.forEach(el => {
+      let info: ElementInfo | undefined;
+      if (!(info = elementInfoMap.get(el))) {
+        elementInfoMap.set(el, (info = { pos: getRect(el), new: !first }));
+      } else if (info.new) {
+        info.new = false;
+        info.newPos = getRect(el);
       }
-      if (n.new) {
-        child.addEventListener(
+      if (info.new) {
+        el.addEventListener(
           "transitionend",
           () => {
-            n!.new = false;
-            child.parentNode && (n!.newPos = getRect(child));
+            info!.new = false;
+            el.parentNode && (info!.newPos = getRect(el));
           },
           { once: true }
         );
       }
-      n.newPos && (n.pos = n.newPos);
-      n.newPos = getRect(child);
+      info.newPos && (info.pos = info.newPos);
+      info.newPos = getRect(el);
     });
+
     if (first) {
       first = false;
-      return nodes!;
+      return;
     }
-    c.forEach(child => {
-      const c = nodes!.get(child)!;
-      const oldPos = c.pos;
-      const newPos = c.newPos!;
+
+    c.forEach(el => {
+      const info = elementInfoMap.get(el)!;
+      const oldPos = info.pos;
+      const newPos = info.newPos!;
       const dx = oldPos.left - newPos.left;
       const dy = oldPos.top - newPos.top;
       if (dx || dy) {
-        c.moved = true;
-        const s = (child as HTMLElement | SVGElement).style;
+        info.moved = true;
+        const s = (el as HTMLElement | SVGElement).style;
         s.transform = `translate(${dx}px,${dy}px)`;
         s.transitionDuration = "0s";
       }
     });
+
     document.body.offsetHeight;
-    c.forEach(child => {
-      const c = nodes!.get(child)!;
-      if (c.moved) {
-        c.moved = false;
-        const s = (child as HTMLElement | SVGElement).style;
+
+    c.forEach(el => {
+      const info = elementInfoMap.get(el)!;
+      if (info.moved) {
+        info.moved = false;
+        const s = (el as HTMLElement | SVGElement).style;
         const { moveClasses } = classnames();
-        child.classList.add(...moveClasses);
+        el.classList.add(...moveClasses);
         s.transform = s.transitionDuration = "";
         function endTransition(e: TransitionEvent) {
-          if ((e && e.target !== child) || !child.parentNode) return;
+          if ((e && e.target !== el) || !el.parentNode) return;
           if (!e || /transform$/.test(e.propertyName)) {
-            (child as HTMLElement | SVGElement).removeEventListener(
+            (el as HTMLElement | SVGElement).removeEventListener(
               "transitionend",
               endTransition as EventListener
             );
-            child.classList.remove(...moveClasses);
+            el.classList.remove(...moveClasses);
           }
         }
-        (child as HTMLElement | SVGElement).addEventListener(
+        (el as HTMLElement | SVGElement).addEventListener(
           "transitionend",
           endTransition as EventListener
         );
       }
     });
-    return nodes!;
-  }, new Map());
+  });
 
   return combined as unknown as JSX.Element;
 };
