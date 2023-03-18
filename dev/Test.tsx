@@ -52,22 +52,6 @@ const getRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(1
 const Colors: Component = () => {
   const [page, setPage] = createSignal(1);
 
-  /*
-
-  Expected output:
-
-  - before exit: true, ""
-  - exit: true, "s-exit s-exit-active"
-  - before enter: false, ""
-  - after exit: false, ""
-  - enter: true, "s-enter s-enter-active"
-  - 1 frame: true, "s-enter s-enter-active"
-  - 2 frame: true, "s-enter s-enter-active"
-  - 3 frame: true, "s-enter-active s-enter-to"
-  - after enter: true, ""
-
-  */
-
   function onBeforeEnter(el: Element) {
     console.log(`before enter: ${el.isConnected}, "${el.className}"`);
     requestAnimationFrame(() => {
