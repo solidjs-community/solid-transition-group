@@ -53,11 +53,12 @@ export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
     appear: props.appear,
     exitMethod: "keep-index",
     onChange({ added, removed, finishRemoved }) {
+      const classes = classnames();
       for (const el of added) {
-        enterTransition(classnames, props, el);
+        enterTransition(classes, props, el);
       }
       for (const el of removed) {
-        exitTransition(classnames, props, el, () => finishRemoved([el]));
+        exitTransition(classes, props, el, () => finishRemoved([el]));
       }
     }
   });

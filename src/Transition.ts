@@ -87,8 +87,12 @@ export const Transition: FlowComponent<TransitionProps> = props => {
     {
       mode: TRANSITION_MODE_MAP[props.mode!],
       appear: props.appear,
-      onEnter: enterTransition.bind(null, classnames, props),
-      onExit: exitTransition.bind(null, classnames, props)
+      onEnter(el, done) {
+        enterTransition(classnames(), props, el, done);
+      },
+      onExit(el, done) {
+        exitTransition(classnames(), props, el, done);
+      }
     }
   ) as unknown as JSX.Element;
 };

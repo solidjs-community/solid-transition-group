@@ -36,12 +36,12 @@ export function nextFrame(fn: () => void) {
  * Run an enter transition on an element - common for both Transition and TransitionGroup
  */
 export function enterTransition(
-  classnames: ReturnType<typeof createClassnames>,
+  classnames: ReturnType<ReturnType<typeof createClassnames>>,
   events: TransitionEvents,
   el: Element,
   done?: VoidFunction
 ) {
-  const { enterClasses, enterActiveClasses, enterToClasses } = classnames();
+  const { enterClasses, enterActiveClasses, enterToClasses } = classnames;
 
   // before the elements are added to the DOM
   events.onBeforeEnter && events.onBeforeEnter(el);
@@ -85,12 +85,12 @@ export function enterTransition(
  * Run an exit transition on an element - common for both Transition and TransitionGroup
  */
 export function exitTransition(
-  classnames: ReturnType<typeof createClassnames>,
+  classnames: ReturnType<ReturnType<typeof createClassnames>>,
   events: TransitionEvents,
   el: Element,
   done?: VoidFunction
 ) {
-  const { exitClasses, exitActiveClasses, exitToClasses } = classnames();
+  const { exitClasses, exitActiveClasses, exitToClasses } = classnames;
 
   // Don't animate element if it's not in the DOM
   // This can happen when elements are changed under Suspense
