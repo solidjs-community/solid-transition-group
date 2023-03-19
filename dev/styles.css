@@ -54,10 +54,16 @@ main {
   }
 }
 
+.list {
+  padding: 2rem;
+  position: relative;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .list-item {
   transition: all 0.5s;
   display: inline-block;
-  margin-right: 10px;
 }
 
 .list-item-enter,
