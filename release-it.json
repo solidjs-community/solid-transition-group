@@ -4,5 +4,8 @@
       "filename": "CHANGELOG.md",
       "addVersionUrl": true
     }
+  },
+  "hooks": {
+    "before:init": "pnpm run build"
   }
 }

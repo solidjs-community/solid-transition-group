@@ -20,13 +20,13 @@
   ],
   "scripts": {
     "dev": "astro dev --root dev",
+    "build:site": "astro build --root dev",
     "build": "tsup",
     "test:client": "vitest",
     "test:ssr": "pnpm run test:client --mode ssr",
     "test": "concurrently pnpm:test:*",
     "format": "prettier -w **/*.{js,ts,json,css,tsx,jsx} --ignore-path .gitignore",
-    "release": "release-it",
-    "prepublishOnly": "pnpm run build"
+    "release": "release-it"
   },
   "devDependencies": {
     "@astrojs/solid-js": "^2.1.0",
