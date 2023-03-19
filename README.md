@@ -8,68 +8,68 @@
 [![version](https://img.shields.io/npm/v/solid-transition-group?style=for-the-badge)](https://www.npmjs.com/package/solid-transition-group)
 [![downloads](https://img.shields.io/npm/dw/solid-transition-group?color=blue&style=for-the-badge)](https://www.npmjs.com/package/solid-transition-group)
 
-Animation library influenced by React Transition Group and Vue Transitions for the SolidJS library.
-
-Known limitation: Transition and Transition Group work on detecting changes on DOM children. Only supports single DOM child. Not Text or Fragments.
-
-Animations aren't always smooth under rapid input still working on improving.
+Components for applying animations when children elements enter or leave the DOM. Influenced by React Transition Group and Vue Transitions for the SolidJS library.
 
 ## Installation
 
 ```bash
-# npm
 npm install solid-transition-group
-# yarn
+# or
 yarn add solid-transition-group
-# pnpm
+# or
 pnpm add solid-transition-group
 ```
 
 ## Transition
 
-### Props
+`<Transition>` serve as transition effects for single element/component. The `<Transition>` only applies the transition behavior to the wrapped content inside; it doesn't render an extra DOM element, or show up in the inspected component hierarchy.
 
 All props besides `children` are optional.
 
-Props for customizing the **timing** of the transition:
+### Using with CSS
 
-| Name     | Type                              | Description                                                                                                                          |
-| -------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `appear` | `boolean`                         | Whether to apply transition on initial render. Defaults to `false`.                                                                  |
-| `mode`   | `"inout" \| "outin" \| undefined` | Controls the timing sequence of leaving/entering transitions. Available modes are `"outin"` and `"inout"`; defaults to simultaneous. |
+Usage with CSS is straightforward. Just add the `name` prop and the CSS classes will be automatically generated for you. The `name` prop is used as a prefix for the generated CSS classes. For example, if you use `name="slide-fade"`, the generated CSS classes will be `.slide-fade-enter`, `.slide-fade-enter-active`, etc.
 
-**Events** proved by `<Transition>` for animating elements with JavaScript:
+The exitting element will be removed from the DOM when the first transition ends. You can override this behavior by providing a `done` callback to the `onExit` prop.
 
-| Name            | Parameters                           | Description                                                                                                                                                                                                                                                                                                                                                                           |
-| --------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `onBeforeEnter` | `element: Element`                   | Function called before the enter transition starts. The `element` is not yet rendered.                                                                                                                                                                                                                                                                                                |
-| `onEnter`       | `element: Element, done: () => void` | Function called when the enter transition starts. The `element` is rendered to the DOM. Call `done` to end the transition - removes the enter classes, and calls `onAfterEnter`. If the parameter for `done` is not provided, it will be called on `transitionend` or `animationend`.                                                                                                 |
-| `onAfterEnter`  | `element: Element`                   | Function called after the enter transition ends. The `element` is removed from the DOM.                                                                                                                                                                                                                                                                                               |
-| `onBeforeExit`  | `element: Element`                   | Function called before the exit transition starts. The `element` is still rendered, exit classes are not yet applied.                                                                                                                                                                                                                                                                 |
-| `onExit`        | `element: Element, done: () => void` | Function called when the exit transition starts, after the exit classes are applied (`enterToClass` and `exitActiveClass`). The `element` is still rendered. Call `done` to end the transition - removes exit classes, calls `onAfterExit` and removes the element from the DOM. If the parameter for `done` is not provided, it will be called on `transitionend` or `animationend`. |
-| `onAfterExit`   | `element: Element`                   | Function called after the exit transition ends. The `element` is removed from the DOM.                                                                                                                                                                                                                                                                                                |
+```tsx
+<Transition name="slide-fade">{show() && <div>Hello</div>}</Transition>
+```
+
+Example CSS transition:
+
+```css
+.slide-fade-enter-active,
+.slide-fade-exit-active {
+  transition: opacity 0.3s, transform 0.3s;
+}
+.slide-fade-enter,
+.slide-fade-exit-to {
+  transform: translateX(10px);
+  opacity: 0;
+}
+.slide-fade-enter {
+  transform: translateX(-10px);
+}
+```
 
 Props for customizing the CSS classes applied by `<Transition>`:
 
 | Name               | Description                                                                                                                                                     |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`             | Used to automatically generate transition CSS class names. e.g. `name: 'fade'` will auto expand to `.fade-enter`, `.fade-enter-active`, etc. Defaults to `"s"`. |
-| `enterClass`       | CSS class applied to the entering element at the start of the enter transition, and removed the frame after.                                                    |
-| `enterToClass`     | CSS class applied to the entering element after the enter transition starts.                                                                                    |
-| `enterActiveClass` | CSS class applied to the entering element for the entire duration of the enter transition.                                                                      |
-| `exitClass`        | CSS class applied to the exiting element at the start of the exit transition, and removed the frame after.                                                      |
-| `exitToClass`      | CSS class applied to the exiting element after the exit transition starts.                                                                                      |
-| `exitActiveClass`  | CSS class applied to the exiting element for the entire duration of the exit transition.                                                                        |
+| `enterClass`       | CSS class applied to the entering element at the start of the enter transition, and removed the frame after. Defaults to `"s-enter"`.                           |
+| `enterToClass`     | CSS class applied to the entering element after the enter transition starts. Defaults to `"s-enter-to"`.                                                        |
+| `enterActiveClass` | CSS class applied to the entering element for the entire duration of the enter transition. Defaults to `"s-enter-active"`.                                      |
+| `exitClass`        | CSS class applied to the exiting element at the start of the exit transition, and removed the frame after. Defaults to `"s-exit"`.                              |
+| `exitToClass`      | CSS class applied to the exiting element after the exit transition starts. Defaults to `"s-exit-to"`.                                                           |
+| `exitActiveClass`  | CSS class applied to the exiting element for the entire duration of the exit transition. Defaults to `"s-exit-active"`.                                         |
 
-### Usage
+### Using with JavaScript
 
-`<Transition>` serve as transition effects for single element/component. The `<Transition>` only applies the transition behavior to the wrapped content inside; it doesn't render an extra DOM element, or show up in the inspected component hierarchy.
+You can also use JavaScript to animate the transition. The `<Transition>` component provides several events that you can use to hook into the transition lifecycle. The `onEnter` and `onExit` events are called when the transition starts, and the `onBeforeEnter` and `onBeforeExit` events are called before the transition starts. The `onAfterEnter` and `onAfterExit` events are called after the transition ends.
 
 ```jsx
-// simple CSS animation
-<Transition name="slide-fade">{show() && <div>Hello</div>}</Transition>
-
-// JS Animation
 <Transition
   onEnter={(el, done) => {
     const a = el.animate([{ opacity: 0 }, { opacity: 1 }], {
@@ -87,6 +87,26 @@ Props for customizing the CSS classes applied by `<Transition>`:
   {show() && <div>Hello</div>}
 </Transition>
 ```
+
+**Events** proved by `<Transition>` for animating elements with JavaScript:
+
+| Name            | Parameters                           | Description                                                                                                                                                                                                                                                                                                                                                                           |
+| --------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `onBeforeEnter` | `element: Element`                   | Function called before the enter transition starts. The `element` is not yet rendered.                                                                                                                                                                                                                                                                                                |
+| `onEnter`       | `element: Element, done: () => void` | Function called when the enter transition starts. The `element` is rendered to the DOM. Call `done` to end the transition - removes the enter classes, and calls `onAfterEnter`. If the parameter for `done` is not provided, it will be called on `transitionend` or `animationend`.                                                                                                 |
+| `onAfterEnter`  | `element: Element`                   | Function called after the enter transition ends. The `element` is removed from the DOM.                                                                                                                                                                                                                                                                                               |
+| `onBeforeExit`  | `element: Element`                   | Function called before the exit transition starts. The `element` is still rendered, exit classes are not yet applied.                                                                                                                                                                                                                                                                 |
+| `onExit`        | `element: Element, done: () => void` | Function called when the exit transition starts, after the exit classes are applied (`enterToClass` and `exitActiveClass`). The `element` is still rendered. Call `done` to end the transition - removes exit classes, calls `onAfterExit` and removes the element from the DOM. If the parameter for `done` is not provided, it will be called on `transitionend` or `animationend`. |
+| `onAfterExit`   | `element: Element`                   | Function called after the exit transition ends. The `element` is removed from the DOM.                                                                                                                                                                                                                                                                                                |
+
+### Changing Transition Mode
+
+By default, `<Transition>` will apply the transition effect to both entering and exiting elements simultaneously. You can change this behavior by setting the `mode` prop to `"outin"` or `"inout"`. The `"outin"` mode will wait for the exiting element to finish before applying the transition to the entering element. The `"inout"` mode will wait for the entering element to finish before applying the transition to the exiting element.
+
+By default the transition won't be applied on initial render. You can change this behavior by setting the `appear` prop to `true`.
+
+> **Warning:** When using `appear` with SSR, the initial transition will be applied on the client-side, which might cause a flash of unstyled content.
+> You need to handle applying the initial transition on the server-side yourself.
 
 ## TransitionGroup
 
@@ -108,3 +128,13 @@ Props for customizing the CSS classes applied by `<Transition>`:
   </TransitionGroup>
 </ul>
 ```
+
+## Demo
+
+Kitchen sink demo: https://solid-transition-group.netlify.app/
+
+Source code: https://github.com/solidjs-community/solid-transition-group/blob/main/dev/Test.tsx
+
+## FAQ
+
+- **How to use with Portal?** - [Issue #8](https://github.com/solidjs-community/solid-transition-group/issues/8)
