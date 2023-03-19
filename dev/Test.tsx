@@ -52,54 +52,23 @@ const getRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(1
 const Colors: Component = () => {
   const [page, setPage] = createSignal(1);
 
-  function onBeforeEnter(el: Element) {
-    console.log(`before enter: ${el.isConnected}, "${el.className}"`);
-    requestAnimationFrame(() => {
-      console.log(`1 frame: ${el.isConnected}, "${el.className}"`);
-      requestAnimationFrame(() => {
-        console.log(`2 frame: ${el.isConnected}, "${el.className}"`);
-        requestAnimationFrame(() => {
-          console.log(`3 frame: ${el.isConnected}, "${el.className}"`);
-        });
-      });
-    });
-  }
   function onEnter(el: Element, done: VoidFunction) {
-    console.log(`enter: ${el.isConnected}, "${el.className}"`);
     const a = el.animate([{ opacity: 0 }, { opacity: 1 }], {
       duration: 800
     });
     a.finished.then(done);
   }
-  function onAfterEnter(el: Element) {
-    console.log(`after enter: ${el.isConnected}, "${el.className}"`);
-  }
-  function onBeforeExit(el: Element) {
-    console.log(`before exit: ${el.isConnected}, "${el.className}"`);
-  }
   function onExit(el: Element, done: VoidFunction) {
-    console.log(`exit: ${el.isConnected}, "${el.className}"`);
     const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
       duration: 800
     });
     a.finished.then(done);
   }
-  function onAfterExit(el: Element) {
-    console.log(`after exit: ${el.isConnected}, "${el.className}"`);
-  }
 
   return (
     <>
       <button onClick={() => setPage(p => ++p)}>Next</button>
-      <Transition
-        mode="outin"
-        onBeforeEnter={onBeforeEnter}
-        onEnter={onEnter}
-        onAfterEnter={onAfterEnter}
-        onBeforeExit={onBeforeExit}
-        onExit={onExit}
-        onAfterExit={onAfterExit}
-      >
+      <Transition mode="outin" onEnter={onEnter} onExit={onExit}>
         <Show when={page()} keyed>
           {i => <div style={{ "background-color": getRandomColor(), padding: "2rem" }}>{i}.</div>}
         </Show>

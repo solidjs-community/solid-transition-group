@@ -18,7 +18,7 @@ specifiers:
 
 dependencies:
   '@solid-primitives/refs': 1.0.0_solid-js@1.6.14
-  '@solid-primitives/transition-group': link:node_modules/@solid-primitives/transition-group
+  '@solid-primitives/transition-group': 1.0.0_solid-js@1.6.14
 
 devDependencies:
   '@astrojs/solid-js': 2.1.0_solid-js@1.6.14
@@ -922,6 +922,14 @@ packages:
       solid-js: ^1.6.0
     dependencies:
       '@solid-primitives/utils': 5.5.0_solid-js@1.6.14
+      solid-js: 1.6.14
+    dev: false
+
+  /@solid-primitives/transition-group/1.0.0_solid-js@1.6.14:
+    resolution: {integrity: sha512-/k4nBZca6gpGsUUPVAUGNowRbQuod8FwGlh1fhr4teQHyFIDNUFUiA74XUwPf49BAHDdCYsNEJo6eDizrXUh1w==}
+    peerDependencies:
+      solid-js: ^1.6.0
+    dependencies:
       solid-js: 1.6.14
     dev: false
 

@@ -28,7 +28,7 @@ export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
   return createListTransition(resolveElements(() => props.children).toArray, {
     appear: props.appear,
     exitMethod: "keep-index",
-    onChange({ added, removed, finishRemoved, unchanged, list }) {
+    onChange({ added, removed, finishRemoved, list }) {
       const classes = classnames();
 
       // ENTER
@@ -37,19 +37,19 @@ export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
       }
 
       // MOVE
-      const elsToMove: { el: HTMLElement | SVGElement; rect: DOMRect }[] = [];
+      const toMove: { el: HTMLElement | SVGElement; rect: DOMRect }[] = [];
       // get rects of elements before the changes to the DOM
       for (const el of list) {
         if (el.isConnected && (el instanceof HTMLElement || el instanceof SVGElement)) {
-          elsToMove.push({ el, rect: el.getBoundingClientRect() });
+          toMove.push({ el, rect: el.getBoundingClientRect() });
         }
       }
 
-      // wait for changes to be rendered
+      // wait for th new list to be rendered
       queueMicrotask(() => {
         const moved: (HTMLElement | SVGElement)[] = [];
 
-        for (const { el, rect } of elsToMove) {
+        for (const { el, rect } of toMove) {
           if (el.isConnected) {
             const newRect = el.getBoundingClientRect(),
               dX = rect.left - newRect.left,

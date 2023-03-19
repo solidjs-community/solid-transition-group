@@ -71,11 +71,11 @@ export function enterTransition(
 
   function endTransition(e?: Event) {
     if (!e || e.target === el) {
+      done && done(); // starts exit transition in "in-out" mode
       el.removeEventListener("transitionend", endTransition);
       el.removeEventListener("animationend", endTransition);
       el.classList.remove(...enterActiveClasses);
       el.classList.remove(...enterToClasses);
-      done && done(); // starts exit transition in "in-out" mode
       events.onAfterEnter && events.onAfterEnter(el);
     }
   }
@@ -114,11 +114,15 @@ export function exitTransition(
 
   function endTransition(e?: Event) {
     if (!e || e.target === el) {
+      // calling done() will remove element from the DOM,
+      // but also trigger onChange callback in <TransitionGroup>.
+      // Which is why the classes need to removed afterwards,
+      // so that removing them won't change el styles when for the move transition
+      done && done();
       el.removeEventListener("transitionend", endTransition);
       el.removeEventListener("animationend", endTransition);
       el.classList.remove(...exitActiveClasses);
       el.classList.remove(...exitToClasses);
-      done && done(); // removes element from DOM, starts enter transition in "out-in" mode
       events.onAfterExit && events.onAfterExit(el);
     }
   }
