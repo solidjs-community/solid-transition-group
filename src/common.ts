@@ -1,16 +1,8 @@
 import { createMemo } from "solid-js";
-import type { TransitionEvents } from "./Transition";
+import type { TransitionEvents, TransitionProps } from "./Transition";
+import type { TransitionGroupProps } from "./TransitionGroup";
 
-export function createClassnames(props: {
-  name?: string;
-  enterActiveClass?: string;
-  enterClass?: string;
-  enterToClass?: string;
-  exitActiveClass?: string;
-  exitClass?: string;
-  exitToClass?: string;
-  moveClass?: string;
-}) {
+export function createClassnames(props: TransitionProps & TransitionGroupProps) {
   return createMemo(() => {
     const name = props.name || "s";
     return {

@@ -5,31 +5,44 @@ import { resolveFirst } from "@solid-primitives/refs";
 
 export type TransitionEvents = {
   /**
-   * Function called before the enter transition starts — before enter classes are applied.
+   * Function called before the enter transition starts.
+   * The {@link element} is not yet rendered.
    */
-  onBeforeEnter?: (el: Element) => void;
+  onBeforeEnter?: (element: Element) => void;
   /**
-   * Function called when the enter transition starts — after `enterToClass` class is applied.
-   * Call `done` to end the transition - removes enter classes and calls `onAfterEnter`.
+   * Function called when the enter transition starts.
+   * The {@link element} is rendered to the DOM.
+   *
+   * Call {@link done} to end the transition - removes the enter classes,
+   * and calls {@link TransitionEvents.onAfterEnter}.
+   * If the parameter for {@link done} is not provided, it will be called on `transitionend` or `animationend`.
    */
-  onEnter?: (el: Element, done: () => void) => void;
+  onEnter?: (element: Element, done: () => void) => void;
   /**
-   * Function called after the enter transition ends — after all enter classes are removed.
+   * Function called after the enter transition ends.
+   * The {@link element} is removed from the DOM.
    */
-  onAfterEnter?: (el: Element) => void;
+  onAfterEnter?: (element: Element) => void;
   /**
-   * Function called before the exit transition starts — before exit classes are applied.
+   * Function called before the exit transition starts.
+   * The {@link element} is still rendered, exit classes are not yet applied.
    */
-  onBeforeExit?: (el: Element) => void;
+  onBeforeExit?: (element: Element) => void;
   /**
-   * Function called when the exit transition starts — after `exitToClass` class is applied.
-   * Call `done` to end the transition - removes exit classes, calls `onAfterExit` and removes the element from the DOM.
+   * Function called when the exit transition starts, after the exit classes are applied
+   * ({@link TransitionProps.enterToClass} and {@link TransitionProps.exitActiveClass}).
+   * The {@link element} is still rendered.
+   *
+   * Call {@link done} to end the transition - removes exit classes,
+   * calls {@link TransitionEvents.onAfterExit} and removes the element from the DOM.
+   * If the parameter for {@link done} is not provided, it will be called on `transitionend` or `animationend`.
    */
-  onExit?: (el: Element, done: () => void) => void;
+  onExit?: (element: Element, done: () => void) => void;
   /**
-   * Function called after the exit transition ends — after all exit classes are removed.
+   * Function called after the exit transition ends.
+   * The {@link element} is removed from the DOM.
    */
-  onAfterExit?: (el: Element) => void;
+  onAfterExit?: (element: Element) => void;
 };
 
 /**
@@ -44,26 +57,32 @@ export type TransitionProps = TransitionEvents & {
   name?: string;
   /**
    * CSS class applied to the entering element for the entire duration of the enter transition.
+   * Defaults to `"s-enter-active"`.
    */
   enterActiveClass?: string;
   /**
    * CSS class applied to the entering element at the start of the enter transition, and removed the frame after.
+   * Defaults to `"s-enter"`.
    */
   enterClass?: string;
   /**
    * CSS class applied to the entering element after the enter transition starts.
+   * Defaults to `"s-enter-to"`.
    */
   enterToClass?: string;
   /**
    * CSS class applied to the exiting element for the entire duration of the exit transition.
+   * Defaults to `"s-exit-active"`.
    */
   exitActiveClass?: string;
   /**
    * CSS class applied to the exiting element at the start of the exit transition, and removed the frame after.
+   * Defaults to `"s-exit"`.
    */
   exitClass?: string;
   /**
    * CSS class applied to the exiting element after the exit transition starts.
+   * Defaults to `"s-exit-to"`.
    */
   exitToClass?: string;
   /**
@@ -71,7 +90,8 @@ export type TransitionProps = TransitionEvents & {
    */
   appear?: boolean;
   /**
-   * Controls the timing sequence of leaving/entering transitions. Available modes are `"outin"` and `"inout"`;
+   * Controls the timing sequence of leaving/entering transitions.
+   * Available modes are `"outin"` and `"inout"`;
    * Defaults to simultaneous.
    */
   mode?: "inout" | "outin";
