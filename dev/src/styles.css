@@ -2,13 +2,43 @@ body {
   background-color: #1e1e1e;
   color: #fff;
   font-family: "Roboto", sans-serif;
-  margin: 0;
-  padding: 0;
 }
 main {
   width: 100%;
   max-width: 600px;
   margin: 10vh auto;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 500;
+}
+h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+h4 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+h5 {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+h6 {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+button {
+  @apply bg-blue-600 text-white font-medium py-1 px-2 rounded;
+  @apply hover:bg-blue-700;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50;
+  @apply transition ease-in-out;
 }
 
 .container {
@@ -54,23 +84,15 @@ main {
   }
 }
 
-.list {
-  padding: 2rem;
-  position: relative;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.list-item {
+.group-item {
   transition: all 0.5s;
-  display: inline-block;
 }
 
-.list-item-enter,
-.list-item-exit-to {
+.group-item-enter,
+.group-item-exit-to {
   opacity: 0;
   transform: translateY(30px);
 }
-.list-item-exit-active {
+.group-item-exit-active {
   position: absolute;
 }

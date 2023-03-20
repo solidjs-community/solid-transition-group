@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "solid-transition-group": ["../src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}

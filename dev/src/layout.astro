@@ -14,14 +14,13 @@ import "./styles.css";
   </head>
   <body>
     <nav>
-      <ul>
-        <li><a href="/">Client only</a></li>
-        <li><a href="/idle">Hydrate on idle</a></li>
-        <li><a href="/no-hydration">No hydration</a></li>
+      <ul class="flex flex-col p-3 gap-y-1">
+        <li><a class="text-blue-500" href="/">Kitchen Sink</a></li>
+        <li><a class="text-blue-500" href="/group">TransitionGroup</a></li>
       </ul>
     </nav>
     <main>
-      <h1>{title}</h1>
+      <h1 class="mb-6">{title}</h1>
       <slot />
     </main>
   </body>

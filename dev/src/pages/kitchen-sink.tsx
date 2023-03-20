@@ -1,5 +1,5 @@
 import { Component, For, Show, createSignal } from "solid-js";
-import { Transition, TransitionGroup } from "../src";
+import { Transition, TransitionGroup } from "solid-transition-group";
 
 function shuffle<T extends any[]>(array: T): T {
   return array.sort(() => Math.random() - 0.5);
@@ -14,38 +14,40 @@ const Group: Component = () => {
 
   return (
     <>
-      <button onClick={() => setList(p => shuffle([...p]))}>Shuffle</button>
-      <button
-        onClick={() => {
-          const rand = randomIndex();
-          setList(p => [...p.slice(0, rand), ...p.slice(rand + 1)]);
-        }}
-      >
-        Remove
-      </button>
-      <button onClick={() => setList([])}>Remove All</button>
-      <button
-        onClick={() => {
-          setList(
-            shuffle(Array.from({ length: 50 }, (_, i) => i).filter(() => Math.random() > 0.5))
-          );
-        }}
-      >
-        Randomize
-      </button>
-      <button
-        onClick={() => {
-          const rand = randomIndex();
-          setList(p => [...p.slice(0, rand), nextId++, ...p.slice(rand)]);
-        }}
-      >
-        Add
-      </button>
-      <div class="list">
-        <TransitionGroup name="list-item">
+      <div class="flex gap-x-1">
+        <button onClick={() => setList(p => shuffle([...p]))}>Shuffle</button>
+        <button
+          onClick={() => {
+            const rand = randomIndex();
+            setList(p => [...p.slice(0, rand), ...p.slice(rand + 1)]);
+          }}
+        >
+          Remove
+        </button>
+        <button onClick={() => setList([])}>Remove All</button>
+        <button
+          onClick={() => {
+            setList(
+              shuffle(Array.from({ length: 50 }, (_, i) => i).filter(() => Math.random() > 0.5))
+            );
+          }}
+        >
+          Randomize
+        </button>
+        <button
+          onClick={() => {
+            const rand = randomIndex();
+            setList(p => [...p.slice(0, rand), nextId++, ...p.slice(rand)]);
+          }}
+        >
+          Add
+        </button>
+      </div>
+      <div class="p-8 relative flex flex-wrap gap-0.5">
+        <TransitionGroup name="group-item">
           <For each={list()} fallback={<div>fallback</div>}>
             {() => (
-              <div class="list-item">
+              <div class="group-item">
                 <svg width="20" height="20" viewBox="0 0 4 4">
                   <rect
                     width={2.5 - Math.random()}
@@ -104,7 +106,7 @@ const SwitchJS: Component = () => {
   );
 };
 
-const App = () => {
+const Example = () => {
   const [show, toggleShow] = createSignal(true);
 
   return (
@@ -169,4 +171,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Example;
