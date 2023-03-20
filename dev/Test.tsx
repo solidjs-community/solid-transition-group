@@ -1,123 +1,103 @@
-import { Component, For, Match, Show, Switch, createSignal } from "solid-js";
+import { Component, For, Show, createSignal } from "solid-js";
 import { Transition, TransitionGroup } from "../src";
 
 function shuffle<T extends any[]>(array: T): T {
   return array.sort(() => Math.random() - 0.5);
 }
 
-const Group: Component = () => {
-  const [numList, setNumList] = createSignal([1, 2, 3, 4, 5, 6, 7, 8, 9]),
-    randomIndex = () => Math.floor(Math.random() * numList().length);
+const getRandomColor = () => `#${((Math.random() * 2 ** 24) | 0).toString(16)}`;
 
+const Group: Component = () => {
+  const [list, setList] = createSignal([1, 2, 3, 4, 5, 6, 7, 8, 9]);
   let nextId = 10;
+  const randomIndex = () => Math.floor(Math.random() * list().length);
 
   return (
     <>
+      <button onClick={() => setList(p => shuffle([...p]))}>Shuffle</button>
       <button
         onClick={() => {
-          const list = numList(),
-            idx = randomIndex();
-          setNumList([...list.slice(0, idx), nextId++, ...list.slice(idx)]);
-        }}
-      >
-        Add
-      </button>
-      <button
-        onClick={() => {
-          const list = numList(),
-            idx = randomIndex();
-          setNumList([...list.slice(0, idx), ...list.slice(idx + 1)]);
+          const rand = randomIndex();
+          setList(p => [...p.slice(0, rand), ...p.slice(rand + 1)]);
         }}
       >
         Remove
       </button>
+      <button onClick={() => setList([])}>Remove All</button>
       <button
         onClick={() => {
-          const randomList = shuffle(numList().slice());
-          setNumList(randomList);
+          setList(
+            shuffle(Array.from({ length: 50 }, (_, i) => i).filter(() => Math.random() > 0.5))
+          );
         }}
       >
-        Shuffle
+        Randomize
       </button>
-      <br />
-      <TransitionGroup name="list-item" appear>
-        <For each={numList()}>{r => <span class="list-item">{r}</span>}</For>
-      </TransitionGroup>
+      <button
+        onClick={() => {
+          const rand = randomIndex();
+          setList(p => [...p.slice(0, rand), nextId++, ...p.slice(rand)]);
+        }}
+      >
+        Add
+      </button>
+      <div class="list">
+        <TransitionGroup name="list-item">
+          <For each={list()} fallback={<div>fallback</div>}>
+            {() => (
+              <div class="list-item">
+                <svg width="20" height="20" viewBox="0 0 4 4">
+                  <rect
+                    width={2.5 - Math.random()}
+                    height={2.5 - Math.random()}
+                    transform={`translate(0.5, 0.5) rotate(${Math.random() * 360} 1.5 1)`}
+                    fill={getRandomColor()}
+                  />
+                </svg>
+              </div>
+            )}
+          </For>
+        </TransitionGroup>
+      </div>
     </>
   );
 };
 
-const getRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-
-const Colors: Component = () => {
+const SwitchCSS: Component = () => {
   const [page, setPage] = createSignal(1);
 
-  /*
+  return (
+    <>
+      <button onClick={() => setPage(p => ++p)}>Next</button>
+      <br />
+      <Transition mode="outin" name="fade">
+        <Show when={page()} keyed>
+          {i => <div style={{ "background-color": getRandomColor(), padding: "1rem" }}>{i}.</div>}
+        </Show>
+      </Transition>
+    </>
+  );
+};
 
-  Expected output:
+const SwitchJS: Component = () => {
+  const [page, setPage] = createSignal(1);
 
-  - before exit: true, ""
-  - exit: true, "s-exit s-exit-active"
-  - before enter: false, ""
-  - after exit: false, ""
-  - enter: true, "s-enter s-enter-active"
-  - 1 frame: true, "s-enter s-enter-active"
-  - 2 frame: true, "s-enter s-enter-active"
-  - 3 frame: true, "s-enter-active s-enter-to"
-  - after enter: true, ""
-
-  */
-
-  function onBeforeEnter(el: Element) {
-    console.log(`before enter: ${el.isConnected}, "${el.className}"`);
-    requestAnimationFrame(() => {
-      console.log(`1 frame: ${el.isConnected}, "${el.className}"`);
-      requestAnimationFrame(() => {
-        console.log(`2 frame: ${el.isConnected}, "${el.className}"`);
-        requestAnimationFrame(() => {
-          console.log(`3 frame: ${el.isConnected}, "${el.className}"`);
-        });
-      });
-    });
-  }
   function onEnter(el: Element, done: VoidFunction) {
-    console.log(`enter: ${el.isConnected}, "${el.className}"`);
-    const a = el.animate([{ opacity: 0 }, { opacity: 1 }], {
-      duration: 800
-    });
+    const a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, easing: "ease" });
     a.finished.then(done);
-  }
-  function onAfterEnter(el: Element) {
-    console.log(`after enter: ${el.isConnected}, "${el.className}"`);
-  }
-  function onBeforeExit(el: Element) {
-    console.log(`before exit: ${el.isConnected}, "${el.className}"`);
   }
   function onExit(el: Element, done: VoidFunction) {
-    console.log(`exit: ${el.isConnected}, "${el.className}"`);
-    const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
-      duration: 800
-    });
+    const a = el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, easing: "ease" });
     a.finished.then(done);
-  }
-  function onAfterExit(el: Element) {
-    console.log(`after exit: ${el.isConnected}, "${el.className}"`);
   }
 
   return (
     <>
       <button onClick={() => setPage(p => ++p)}>Next</button>
-      <Transition
-        mode="outin"
-        onBeforeEnter={onBeforeEnter}
-        onEnter={onEnter}
-        onAfterEnter={onAfterEnter}
-        onBeforeExit={onBeforeExit}
-        onExit={onExit}
-        onAfterExit={onAfterExit}
-      >
+      <br />
+      <Transition mode="outin" onEnter={onEnter} onExit={onExit}>
         <Show when={page()} keyed>
-          {i => <div style={{ "background-color": getRandomColor(), padding: "2rem" }}>{i}.</div>}
+          {i => <div style={{ "background-color": getRandomColor(), padding: "1rem" }}>{i}.</div>}
         </Show>
       </Transition>
     </>
@@ -125,12 +105,12 @@ const Colors: Component = () => {
 };
 
 const App = () => {
-  const [show, toggleShow] = createSignal(true),
-    [select, setSelect] = createSignal(0);
+  const [show, toggleShow] = createSignal(true);
 
   return (
     <>
       <button onClick={() => toggleShow(!show())}>{show() ? "Hide" : "Show"}</button>
+      <br />
       <br />
       <b>Transition:</b>
       <Transition name="slide-fade">
@@ -172,32 +152,19 @@ const App = () => {
       </Transition>
       <br />
 
-      <b>Switch OutIn</b>
+      <b>Switch OutIn CSS</b>
       <br />
-      <button onClick={() => setSelect((select() + 1) % 3)}>Next</button>
-      <Transition name="fade" mode="outin">
-        <Switch>
-          <Match when={select() === 0}>
-            <p class="container">The First</p>
-          </Match>
-          <Match when={select() === 1}>
-            <p class="container">The Second</p>
-          </Match>
-          <Match when={select() === 2}>
-            <p class="container">The Third</p>
-          </Match>
-        </Switch>
-      </Transition>
+      <SwitchCSS />
+      <br />
+
+      <b>Switch OutIn JS</b>
+      <br />
+      <SwitchJS />
+      <br />
 
       <b>Group</b>
       <br />
       <Group />
-      <br />
-      <br />
-
-      <b>Colors</b>
-      <br />
-      <Colors />
     </>
   );
 };

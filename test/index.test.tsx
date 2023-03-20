@@ -12,6 +12,7 @@ function flushRaf() {
 import { Show, createRoot, createSignal } from "solid-js";
 import { describe, expect, it } from "vitest";
 import { Transition } from "../src";
+import { exitTransition } from "../src/common";
 
 describe("Transition", () => {
   it("matches the timing of vue out-in transition", async () => {
@@ -102,5 +103,43 @@ describe("Transition", () => {
     ]);
 
     dispose();
+  });
+});
+
+describe("exitTransition", () => {
+  it("removes exit classes after calling done()", () => {
+    const parent = document.createElement("div");
+    const el = document.createElement("div");
+    parent.appendChild(el);
+
+    let capturedClassName: string | null = null;
+
+    exitTransition(
+      {
+        enterActiveClasses: ["s-enter-active"],
+        enterToClasses: ["s-enter-to"],
+        enterClasses: ["s-enter"],
+        exitActiveClasses: ["s-exit-active"],
+        exitToClasses: ["s-exit-to"],
+        exitClasses: ["s-exit"],
+        moveClasses: ["s-move"]
+      },
+      {},
+      el,
+      () => (capturedClassName = el.className)
+    );
+
+    expect(el.className).toBe("s-exit s-exit-active");
+    expect(capturedClassName).toBe(null);
+
+    flushRaf();
+    flushRaf();
+
+    expect(el.className).toBe("s-exit-active s-exit-to");
+    expect(capturedClassName).toBe(null);
+
+    el.dispatchEvent(new Event("transitionend"));
+
+    expect(capturedClassName).toBe("s-exit-active s-exit-to");
   });
 });

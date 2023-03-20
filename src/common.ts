@@ -1,16 +1,8 @@
 import { createMemo } from "solid-js";
-import type { TransitionEvents } from "./Transition";
+import type { TransitionEvents, TransitionProps } from "./Transition";
+import type { TransitionGroupProps } from "./TransitionGroup";
 
-export function createClassnames(props: {
-  name?: string;
-  enterActiveClass?: string;
-  enterClass?: string;
-  enterToClass?: string;
-  exitActiveClass?: string;
-  exitClass?: string;
-  exitToClass?: string;
-  moveClass?: string;
-}) {
+export function createClassnames(props: TransitionProps & TransitionGroupProps) {
   return createMemo(() => {
     const name = props.name || "s";
     return {
@@ -41,10 +33,11 @@ export function enterTransition(
   el: Element,
   done?: VoidFunction
 ) {
-  const { enterClasses, enterActiveClasses, enterToClasses } = classnames;
+  const { enterClasses, enterActiveClasses, enterToClasses } = classnames,
+    { onBeforeEnter, onEnter, onAfterEnter } = events;
 
   // before the elements are added to the DOM
-  events.onBeforeEnter && events.onBeforeEnter(el);
+  onBeforeEnter?.(el);
 
   el.classList.add(...enterClasses);
   el.classList.add(...enterActiveClasses);
@@ -54,16 +47,16 @@ export function enterTransition(
   queueMicrotask(() => {
     // Don't animate element if it's not in the DOM
     // This can happen when elements are changed under Suspense
-    if (!el.parentNode) return done && done();
+    if (!el.parentNode) return done?.();
 
-    events.onEnter && events.onEnter(el, () => endTransition());
+    onEnter?.(el, () => endTransition());
   });
 
   nextFrame(() => {
     el.classList.remove(...enterClasses);
     el.classList.add(...enterToClasses);
 
-    if (!events.onEnter || events.onEnter.length < 2) {
+    if (!onEnter || onEnter.length < 2) {
       el.addEventListener("transitionend", endTransition);
       el.addEventListener("animationend", endTransition);
     }
@@ -71,12 +64,12 @@ export function enterTransition(
 
   function endTransition(e?: Event) {
     if (!e || e.target === el) {
+      done?.(); // starts exit transition in "in-out" mode
       el.removeEventListener("transitionend", endTransition);
       el.removeEventListener("animationend", endTransition);
       el.classList.remove(...enterActiveClasses);
       el.classList.remove(...enterToClasses);
-      done && done(); // starts exit transition in "in-out" mode
-      events.onAfterEnter && events.onAfterEnter(el);
+      onAfterEnter?.(el);
     }
   }
 }
@@ -90,36 +83,42 @@ export function exitTransition(
   el: Element,
   done?: VoidFunction
 ) {
-  const { exitClasses, exitActiveClasses, exitToClasses } = classnames;
+  const { exitClasses, exitActiveClasses, exitToClasses } = classnames,
+    { onBeforeExit, onExit, onAfterExit } = events;
 
   // Don't animate element if it's not in the DOM
   // This can happen when elements are changed under Suspense
-  if (!el.parentNode) return done && done();
+  if (!el.parentNode) return done?.();
 
-  events.onBeforeExit && events.onBeforeExit(el);
+  onBeforeExit?.(el);
 
   el.classList.add(...exitClasses);
   el.classList.add(...exitActiveClasses);
+
+  onExit?.(el, () => endTransition());
+
   nextFrame(() => {
     el.classList.remove(...exitClasses);
     el.classList.add(...exitToClasses);
+
+    if (!onExit || onExit.length < 2) {
+      el.addEventListener("transitionend", endTransition);
+      el.addEventListener("animationend", endTransition);
+    }
   });
-
-  events.onExit && events.onExit(el, () => endTransition());
-
-  if (!events.onExit || events.onExit.length < 2) {
-    el.addEventListener("transitionend", endTransition);
-    el.addEventListener("animationend", endTransition);
-  }
 
   function endTransition(e?: Event) {
     if (!e || e.target === el) {
+      // calling done() will remove element from the DOM,
+      // but also trigger onChange callback in <TransitionGroup>.
+      // Which is why the classes need to removed afterwards,
+      // so that removing them won't change el styles when for the move transition
+      done?.();
       el.removeEventListener("transitionend", endTransition);
       el.removeEventListener("animationend", endTransition);
       el.classList.remove(...exitActiveClasses);
       el.classList.remove(...exitToClasses);
-      done && done(); // removes element from DOM, starts enter transition in "out-in" mode
-      events.onAfterExit && events.onAfterExit(el);
+      onAfterExit?.(el);
     }
   }
 }
