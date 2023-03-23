@@ -36,7 +36,7 @@
     "jsdom": "^21.1.1",
     "prettier": "^2.8.4",
     "release-it": "^15.9.0",
-    "solid-js": "^1.6.14",
+    "solid-js": "^1.6.15",
     "tsup": "^6.6.3",
     "typescript": "^4.9.5",
     "vite-plugin-solid": "^2.6.1",
@@ -45,11 +45,11 @@
     "tailwindcss": "^3.0.24"
   },
   "dependencies": {
-    "@solid-primitives/refs": "^1.0.0",
-    "@solid-primitives/transition-group": "^1.0.0"
+    "@solid-primitives/refs": "^1.0.1",
+    "@solid-primitives/transition-group": "^1.0.1"
   },
   "peerDependencies": {
-    "solid-js": "^1.5.0"
+    "solid-js": "^1.6.12"
   },
   "packageManager": "pnpm@7.24.0"
 }
