@@ -26,7 +26,7 @@
     "test:ssr": "pnpm run test:client --mode ssr",
     "test": "concurrently pnpm:test:*",
     "format": "prettier -w **/*.{js,ts,json,css,tsx,jsx} --ignore-path .gitignore",
-    "release": "release-it"
+    "release": "pnpm build && release-it"
   },
   "devDependencies": {
     "@astrojs/solid-js": "^2.1.0",
