@@ -33,7 +33,17 @@ Usage with CSS is straightforward. Just add the `name` prop and the CSS classes 
 The exitting element will be removed from the DOM when the first transition ends. You can override this behavior by providing a `done` callback to the `onExit` prop.
 
 ```tsx
-<Transition name="slide-fade">{show() && <div>Hello</div>}</Transition>
+import { Transition } from "solid-transition-group"
+
+const [isVisible, setVisible] = createSignal(true)
+
+<Transition name="slide-fade">
+  <Show when={isVisible()}>
+    <div>Hello</div>
+  </Show>
+</Transition>
+
+setVisible(false) // triggers exit transition
 ```
 
 Example CSS transition:
