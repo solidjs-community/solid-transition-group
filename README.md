@@ -148,3 +148,5 @@ Source code: https://github.com/solidjs-community/solid-transition-group/blob/ma
 ## FAQ
 
 - **How to use with Portal?** - [Issue #8](https://github.com/solidjs-community/solid-transition-group/issues/8)
+- **How to use with Outlet?** - [Issue #29](https://github.com/solidjs-community/solid-transition-group/issues/29)
+- **Why elements are not connected in outin mode** - [Issue #34](https://github.com/solidjs-community/solid-transition-group/issues/34)
