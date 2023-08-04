@@ -66,7 +66,7 @@ export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
         document.body.offsetHeight; // force reflow
 
         for (const el of moved) {
-          el.classList.add(...classes.moveClasses);
+          el.classList.add(...classes.move);
 
           // clear transition - els will move to their new position
           el.style.transform = el.style.transitionDuration = "";
@@ -74,7 +74,7 @@ export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
           function endTransition(e: Event) {
             if (e.target === el || /transform$/.test((e as TransitionEvent).propertyName)) {
               el.removeEventListener("transitionend", endTransition);
-              el.classList.remove(...classes.moveClasses);
+              el.classList.remove(...classes.move);
             }
           }
           el.addEventListener("transitionend", endTransition);

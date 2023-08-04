@@ -116,13 +116,13 @@ describe("exitTransition", () => {
 
     exitTransition(
       {
-        enterActiveClasses: ["s-enter-active"],
-        enterToClasses: ["s-enter-to"],
-        enterClasses: ["s-enter"],
-        exitActiveClasses: ["s-exit-active"],
-        exitToClasses: ["s-exit-to"],
-        exitClasses: ["s-exit"],
-        moveClasses: ["s-move"]
+        enterActive: ["s-enter-active"],
+        enterTo: ["s-enter-to"],
+        enter: ["s-enter"],
+        exitActive: ["s-exit-active"],
+        exitTo: ["s-exit-to"],
+        exit: ["s-exit"],
+        move: ["s-move"]
       },
       {},
       el,

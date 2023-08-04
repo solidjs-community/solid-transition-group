@@ -6,13 +6,13 @@ export function createClassnames(props: TransitionProps & TransitionGroupProps) 
   return createMemo(() => {
     const name = props.name || "s";
     return {
-      enterActiveClasses: (props.enterActiveClass || name + "-enter-active").split(" "),
-      enterClasses: (props.enterClass || name + "-enter").split(" "),
-      enterToClasses: (props.enterToClass || name + "-enter-to").split(" "),
-      exitActiveClasses: (props.exitActiveClass || name + "-exit-active").split(" "),
-      exitClasses: (props.exitClass || name + "-exit").split(" "),
-      exitToClasses: (props.exitToClass || name + "-exit-to").split(" "),
-      moveClasses: (props.moveClass || name + "-move").split(" ")
+      enterActive: (props.enterActiveClass || name + "-enter-active").split(" "),
+      enter: (props.enterClass || name + "-enter").split(" "),
+      enterTo: (props.enterToClass || name + "-enter-to").split(" "),
+      exitActive: (props.exitActiveClass || name + "-exit-active").split(" "),
+      exit: (props.exitClass || name + "-exit").split(" "),
+      exitTo: (props.exitToClass || name + "-exit-to").split(" "),
+      move: (props.moveClass || name + "-move").split(" ")
     };
   });
 }
@@ -28,19 +28,18 @@ export function nextFrame(fn: () => void) {
  * Run an enter transition on an element - common for both Transition and TransitionGroup
  */
 export function enterTransition(
-  classnames: ReturnType<ReturnType<typeof createClassnames>>,
+  classes: ReturnType<ReturnType<typeof createClassnames>>,
   events: TransitionEvents,
   el: Element,
   done?: VoidFunction
 ) {
-  const { enterClasses, enterActiveClasses, enterToClasses } = classnames,
-    { onBeforeEnter, onEnter, onAfterEnter } = events;
+  const { onBeforeEnter, onEnter, onAfterEnter } = events;
 
   // before the elements are added to the DOM
   onBeforeEnter?.(el);
 
-  el.classList.add(...enterClasses);
-  el.classList.add(...enterActiveClasses);
+  el.classList.add(...classes.enter);
+  el.classList.add(...classes.enterActive);
 
   // after the microtask the elements will be added to the DOM
   // and onEnter will be called in the same frame
@@ -53,8 +52,8 @@ export function enterTransition(
   });
 
   nextFrame(() => {
-    el.classList.remove(...enterClasses);
-    el.classList.add(...enterToClasses);
+    el.classList.remove(...classes.enter);
+    el.classList.add(...classes.enterTo);
 
     if (!onEnter || onEnter.length < 2) {
       el.addEventListener("transitionend", endTransition);
@@ -67,8 +66,8 @@ export function enterTransition(
       done?.(); // starts exit transition in "in-out" mode
       el.removeEventListener("transitionend", endTransition);
       el.removeEventListener("animationend", endTransition);
-      el.classList.remove(...enterActiveClasses);
-      el.classList.remove(...enterToClasses);
+      el.classList.remove(...classes.enterActive);
+      el.classList.remove(...classes.enterTo);
       onAfterEnter?.(el);
     }
   }
@@ -78,13 +77,12 @@ export function enterTransition(
  * Run an exit transition on an element - common for both Transition and TransitionGroup
  */
 export function exitTransition(
-  classnames: ReturnType<ReturnType<typeof createClassnames>>,
+  classes: ReturnType<ReturnType<typeof createClassnames>>,
   events: TransitionEvents,
   el: Element,
   done?: VoidFunction
 ) {
-  const { exitClasses, exitActiveClasses, exitToClasses } = classnames,
-    { onBeforeExit, onExit, onAfterExit } = events;
+  const { onBeforeExit, onExit, onAfterExit } = events;
 
   // Don't animate element if it's not in the DOM
   // This can happen when elements are changed under Suspense
@@ -92,14 +90,14 @@ export function exitTransition(
 
   onBeforeExit?.(el);
 
-  el.classList.add(...exitClasses);
-  el.classList.add(...exitActiveClasses);
+  el.classList.add(...classes.exit);
+  el.classList.add(...classes.exitActive);
 
   onExit?.(el, () => endTransition());
 
   nextFrame(() => {
-    el.classList.remove(...exitClasses);
-    el.classList.add(...exitToClasses);
+    el.classList.remove(...classes.exit);
+    el.classList.add(...classes.exitTo);
 
     if (!onExit || onExit.length < 2) {
       el.addEventListener("transitionend", endTransition);
@@ -116,8 +114,8 @@ export function exitTransition(
       done?.();
       el.removeEventListener("transitionend", endTransition);
       el.removeEventListener("animationend", endTransition);
-      el.classList.remove(...exitActiveClasses);
-      el.classList.remove(...exitToClasses);
+      el.classList.remove(...classes.exitActive);
+      el.classList.remove(...classes.exitTo);
       onAfterExit?.(el);
     }
   }
