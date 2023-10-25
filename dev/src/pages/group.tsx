@@ -1,11 +1,11 @@
 import { Component, For, createSignal } from "solid-js";
 import { TransitionGroup } from "solid-transition-group";
 
-function shuffle<T extends any[]>(array: T): T {
+function shuffle<T>(array: T[]): T[] {
   return array.sort(() => Math.random() - 0.5);
 }
 
-const getRanomChar = () => ({ v: String.fromCharCode(65 + Math.floor(Math.random() * 26)) });
+const getRandomChar = () => ({ v: String.fromCharCode(65 + Math.floor(Math.random() * 26)) });
 
 const Group: Component = () => {
   const [list, setList] = createSignal<{ v: string }[]>([
@@ -51,9 +51,9 @@ const Group: Component = () => {
             const rand = randomIndex();
             setList(p => [
               ...p.slice(0, rand),
-              getRanomChar(),
-              getRanomChar(),
-              getRanomChar(),
+              getRandomChar(),
+              getRandomChar(),
+              getRandomChar(),
               ...p.slice(rand)
             ]);
           }}
