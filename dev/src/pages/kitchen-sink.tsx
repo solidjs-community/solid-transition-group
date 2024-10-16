@@ -106,6 +106,68 @@ const SwitchJS: Component = () => {
   );
 };
 
+const Collapse: Component = () => {
+  const [show, toggleShow] = createSignal(true);
+
+  const COLLAPSED_PROPERTIES = {
+    height: 0,
+    marginTop: 0,
+    marginBottom: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
+    borderTopWidth: 0,
+    borderBottomWidth: 0
+  };
+
+  function getHeight(el: Element): string {
+    const rect = el.getBoundingClientRect();
+    return `${rect.height}px`;
+  }
+
+  function onEnter(el: Element, done: VoidFunction) {
+    const a = el.animate(
+      [
+        COLLAPSED_PROPERTIES,
+        {
+          height: getHeight(el)
+        }
+      ],
+      { duration: 500, easing: "ease" }
+    );
+
+    a.finished.then(done);
+  }
+
+  function onExit(el: Element, done: VoidFunction) {
+    const a = el.animate(
+      [
+        {
+          height: getHeight(el)
+        },
+        COLLAPSED_PROPERTIES
+      ],
+      { duration: 500, easing: "ease" }
+    );
+
+    a.finished.then(done);
+  }
+
+  return (
+    <>
+      <button onClick={() => toggleShow(!show())}>{show() ? "Hide" : "Show"}</button>
+      <br />
+      <Transition mode="outin" name="collapse" onEnter={onEnter} onExit={onExit}>
+        <Show when={show()}>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris facilisis enim libero,
+            at lacinia diam fermentum id. Pellentesque habitant morbi tristique senectus et netus.
+          </p>
+        </Show>
+      </Transition>
+    </>
+  );
+};
+
 const Example = () => {
   const [show, toggleShow] = createSignal(true);
 
@@ -162,6 +224,11 @@ const Example = () => {
       <b>Switch OutIn JS</b>
       <br />
       <SwitchJS />
+      <br />
+
+      <b>Collapse OutIn CSS & JS</b>
+      <br />
+      <Collapse />
       <br />
 
       <b>Group</b>
