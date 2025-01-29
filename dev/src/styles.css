@@ -84,6 +84,11 @@ button {
   }
 }
 
+.collapse-exit-active,
+.collapse-enter-active {
+  overflow: hidden;
+}
+
 .group-item {
   transition: all 0.5s;
 }
