@@ -143,7 +143,7 @@ By default the transition won't be applied on initial render. You can change thi
 
 Kitchen sink demo: https://solid-transition-group.netlify.app/
 
-Source code: https://github.com/solidjs-community/solid-transition-group/blob/main/dev/src/pages/kitchen-sink.tsx
+Source code: https://github.com/solidjs-community/solid-transition-group/blob/main/dev/pages/kitchen-sink.tsx
 
 ## FAQ
 
