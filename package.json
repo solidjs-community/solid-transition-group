@@ -30,8 +30,7 @@
     "test:client": "vitest",
     "test:ssr": "pnpm run test:client --mode ssr",
     "test": "concurrently pnpm:test:*",
-    "format": "prettier -w **/*.{js,ts,json,css,tsx,jsx} --ignore-path .gitignore",
-    "release": "pnpm build && release-it"
+    "format": "prettier -w **/*.{js,ts,json,css,tsx,jsx} --ignore-path .gitignore"
   },
   "devDependencies": {
     "@astrojs/solid-js": "^2.2.0",
