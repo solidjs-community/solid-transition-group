@@ -12,8 +12,8 @@ export default defineConfig(({ mode }) => {
         // https://github.com/solidjs/solid-refresh/issues/29
         hot: false,
         // For testing SSR we need to do a SSR JSX transform
-        solid: { generate: testSSR ? "ssr" : "dom" }
-      })
+        solid: { generate: testSSR ? "ssr" : "dom" },
+      }),
     ],
     test: {
       watch: false,
@@ -22,15 +22,15 @@ export default defineConfig(({ mode }) => {
       transformMode: { web: [/\.[jt]sx$/] },
       ...(testSSR
         ? {
-            include: ["test/server.test.{ts,tsx}"]
+            include: ["test/server.test.{ts,tsx}"],
           }
         : {
             include: ["test/*.test.{ts,tsx}"],
-            exclude: ["test/server.test.{ts,tsx}"]
-          })
+            exclude: ["test/server.test.{ts,tsx}"],
+          }),
     },
     resolve: {
-      conditions: testSSR ? ["node"] : ["browser", "development"]
-    }
+      conditions: testSSR ? ["node"] : ["browser", "development"],
+    },
   };
 });

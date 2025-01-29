@@ -9,12 +9,14 @@ const __dirname = path.dirname(__filename);
 
 // https://astro.build/config
 export default defineConfig({
+  outDir: "dev/dist",
+  srcDir: "dev",
   vite: {
     resolve: {
       alias: {
-        "solid-transition-group": path.resolve(__dirname, "../src/index.ts")
-      }
-    }
+        "solid-transition-group": path.resolve(__dirname, "./src/index.ts"),
+      },
+    },
   },
-  integrations: [solid(), tailwind()]
+  integrations: [solid(), tailwind()],
 });

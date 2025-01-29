@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Transition } from "../src";
+import { Transition } from "../src/index.js";
 import { renderToString } from "solid-js/web";
 
 describe("Transition", () => {

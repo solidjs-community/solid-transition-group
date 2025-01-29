@@ -1,20 +1,24 @@
 {
   "compilerOptions": {
+    "module": "NodeNext",
     "target": "ESNext",
-    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["DOM", "ESNext"],
+    "types": [],
     "newLine": "LF",
-    "moduleResolution": "node",
     "noEmit": true,
-    "strict": true,
     "allowSyntheticDefaultImports": true,
+    "strict": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+    "paths": {
+      "solid-transition-group": ["./src/index.ts"]
+    }
   },
-  "include": ["src", "test"],
-  "exclude": ["node_modules", "**/dist/**/*"]
+  "exclude": ["node_modules", "dist"]
 }

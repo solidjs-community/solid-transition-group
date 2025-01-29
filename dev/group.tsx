@@ -30,7 +30,7 @@ const Group: Component = () => {
     { v: "R" },
     { v: "O" },
     { v: "U" },
-    { v: "P" }
+    { v: "P" },
   ]);
   const randomIndex = () => Math.floor(Math.random() * list().length);
 
@@ -54,7 +54,7 @@ const Group: Component = () => {
               getRandomChar(),
               getRandomChar(),
               getRandomChar(),
-              ...p.slice(rand)
+              ...p.slice(rand),
             ]);
           }}
         >

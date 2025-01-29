@@ -11,8 +11,7 @@ function flushRaf() {
 
 import { Show, createRoot, createSignal } from "solid-js";
 import { describe, expect, it } from "vitest";
-import { Transition } from "../src";
-import { exitTransition } from "../src/common";
+import { Transition, exitTransition } from "../src/index.js";
 
 describe("Transition", () => {
   it("matches the timing of vue out-in transition", async () => {
@@ -99,7 +98,7 @@ describe("Transition", () => {
       ["1 frame", true, "s-enter s-enter-active"],
       ["2 frame", true, "s-enter s-enter-active"],
       ["3 frame", true, "s-enter-active s-enter-to"],
-      ["after enter", true, ""]
+      ["after enter", true, ""],
     ]);
 
     dispose();
@@ -122,11 +121,11 @@ describe("exitTransition", () => {
         exitActive: ["s-exit-active"],
         exitTo: ["s-exit-to"],
         exit: ["s-exit"],
-        move: ["s-move"]
+        move: ["s-move"],
       },
       {},
       el,
-      () => (capturedClassName = el.className)
+      () => (capturedClassName = el.className),
     );
 
     expect(el.className).toBe("s-exit s-exit-active");

@@ -28,7 +28,7 @@ const Group: Component = () => {
         <button
           onClick={() => {
             setList(
-              shuffle(Array.from({ length: 50 }, (_, i) => i).filter(() => Math.random() > 0.5))
+              shuffle(Array.from({ length: 50 }, (_, i) => i).filter(() => Math.random() > 0.5)),
             );
           }}
         >
@@ -116,7 +116,7 @@ const Collapse: Component = () => {
     paddingTop: 0,
     paddingBottom: 0,
     borderTopWidth: 0,
-    borderBottomWidth: 0
+    borderBottomWidth: 0,
   };
 
   function getHeight(el: Element): string {
@@ -129,10 +129,10 @@ const Collapse: Component = () => {
       [
         COLLAPSED_PROPERTIES,
         {
-          height: getHeight(el)
-        }
+          height: getHeight(el),
+        },
       ],
-      { duration: 500, easing: "ease" }
+      { duration: 500, easing: "ease" },
     );
 
     a.finished.then(done);
@@ -142,11 +142,11 @@ const Collapse: Component = () => {
     const a = el.animate(
       [
         {
-          height: getHeight(el)
+          height: getHeight(el),
         },
-        COLLAPSED_PROPERTIES
+        COLLAPSED_PROPERTIES,
       ],
-      { duration: 500, easing: "ease" }
+      { duration: 500, easing: "ease" },
     );
 
     a.finished.then(done);
