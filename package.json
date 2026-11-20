@@ -3,7 +3,7 @@
   "description": "Components to manage animations for SolidJS",
   "author": "Ryan Carniato",
   "license": "MIT",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "homepage": "https://github.com/solidjs/solid-transition-group#readme",
   "repository": {
     "type": "git",
@@ -24,8 +24,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "astro dev",
-    "build:site": "astro build",
+    "dev": "vite serve dev",
+    "build:site": "vite build dev",
     "build": "tsc -b tsconfig.build.json",
     "test:client": "vitest",
     "test:ssr": "pnpm run test:client --mode ssr",
@@ -34,24 +34,25 @@
     "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
-    "@astrojs/solid-js": "^2.2.0",
-    "@astrojs/tailwind": "^4.0.0",
-    "astro": "^2.10.1",
+    "@solidjs/vite-plugin": "^3.0.1",
+    "@solidjs/web": "^2.0.3",
     "concurrently": "^9.1.2",
     "jsdom": "^26.0.0",
+    "postcss": "^8.5.6",
     "prettier": "^3.4.2",
-    "solid-js": "^1.9.4",
-    "tailwindcss": "^3.3.3",
+    "solid-js": "^2.0.3",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
-    "vite-plugin-solid": "^2.11.0",
-    "vitest": "^2.1.8"
+    "vite": "^8.0.0",
+    "vitest": "^5.1.0"
   },
   "dependencies": {
-    "@solid-primitives/refs": "^1.1.0",
-    "@solid-primitives/transition-group": "^1.1.0"
+    "@solid-primitives/refs": "^3.0.0",
+    "@solid-primitives/transition-group": "^2.0.0"
   },
   "peerDependencies": {
-    "solid-js": "^1.6.12"
+    "@solidjs/web": "^2.0.0",
+    "solid-js": "^2.0.0"
   },
   "packageManager": "pnpm@9.15.0",
   "engines": {

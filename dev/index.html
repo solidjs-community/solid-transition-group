@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Kitchen Sink</title>
+  </head>
+  <body>
+    <nav>
+      <ul class="flex flex-col p-3 gap-y-1">
+        <li><a class="text-blue-500" href="/">Kitchen Sink</a></li>
+        <li><a class="text-blue-500" href="/group/">TransitionGroup</a></li>
+      </ul>
+    </nav>
+    <main>
+      <h1 class="mb-6">Kitchen Sink</h1>
+      <div id="root"></div>
+    </main>
+    <script type="module">
+      import "./styles.css";
+      import { render } from "@solidjs/web";
+      import Example from "./kitchen-sink.tsx";
+      render(Example, document.getElementById("root"));
+    </script>
+  </body>
+</html>
