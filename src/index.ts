@@ -1,20 +1,70 @@
-import { createMemo, type FlowComponent, type JSX } from "solid-js";
+import {
+  children,
+  createEffect,
+  createMemo,
+  createRenderEffect,
+  type Accessor,
+  type FlowComponent,
+} from "solid-js";
+import { isServer, type JSX } from "@solidjs/web";
 import { createSwitchTransition, createListTransition } from "@solid-primitives/transition-group";
-import { resolveFirst, resolveElements } from "@solid-primitives/refs";
 
-function createClassnames(props: TransitionProps & TransitionGroupProps) {
-  return createMemo(() => {
-    const name = props.name || "s";
-    return {
-      enterActive: (props.enterActiveClass || name + "-enter-active").split(" "),
-      enter: (props.enterClass || name + "-enter").split(" "),
-      enterTo: (props.enterToClass || name + "-enter-to").split(" "),
-      exitActive: (props.exitActiveClass || name + "-exit-active").split(" "),
-      exit: (props.exitClass || name + "-exit").split(" "),
-      exitTo: (props.exitToClass || name + "-exit-to").split(" "),
-      move: (props.moveClass || name + "-move").split(" "),
-    };
+// on the server, elements are the objects with a `t` property produced by the SSR JSX transform
+const isElement: (item: unknown) => item is Element = isServer
+  ? (item): item is Element => item != null && typeof item === "object" && "t" in item
+  : (item): item is Element => item instanceof Element;
+
+function resolveElements(fn: Accessor<JSX.Element>): Accessor<Element[]> {
+  const resolved = children(fn);
+  return createMemo(() => resolved.toArray().filter(isElement));
+}
+
+type Classes = Record<
+  "enterActive" | "enter" | "enterTo" | "exitActive" | "exit" | "exitTo" | "move",
+  string[]
+>;
+
+/**
+ * Keeps the latest class names in a plain variable. The transition callbacks run inside
+ * the primitives' effect callbacks, where reading a memo would not be tracked.
+ * This render effect is created before the primitive's, so it applies first in every flush.
+ */
+function createClassnames(props: TransitionProps & TransitionGroupProps): () => Classes {
+  let classes: Classes;
+  createRenderEffect(
+    () => {
+      const name = props.name || "s";
+      return {
+        enterActive: (props.enterActiveClass || name + "-enter-active").split(" "),
+        enter: (props.enterClass || name + "-enter").split(" "),
+        enterTo: (props.enterToClass || name + "-enter-to").split(" "),
+        exitActive: (props.exitActiveClass || name + "-exit-active").split(" "),
+        exit: (props.exitClass || name + "-exit").split(" "),
+        exitTo: (props.exitToClass || name + "-exit-to").split(" "),
+        move: (props.moveClass || name + "-move").split(" "),
+      };
+    },
+    c => {
+      classes = c;
+    },
+  );
+  return () => classes;
+}
+
+/**
+ * Removing an exited element from the DOM happens in the flush after `done()` is called.
+ * This runs the after-exit steps once the rendered list has been committed to the DOM.
+ */
+function createAfterExit(rendered: Accessor<Element[]>) {
+  const pending = new Map<Element, VoidFunction>();
+  createEffect(rendered, list => {
+    for (const [el, fn] of pending)
+      if (!list.includes(el)) {
+        pending.delete(el);
+        fn();
+      }
   });
+  return (el: Element, fn: VoidFunction) => pending.set(el, fn);
 }
 
 // https://github.com/solidjs-community/solid-transition-group/issues/12
@@ -28,7 +78,7 @@ function nextFrame(fn: () => void) {
  * Run an enter transition on an element - common for both Transition and TransitionGroup
  */
 function enterTransition(
-  classes: ReturnType<ReturnType<typeof createClassnames>>,
+  classes: Classes,
   events: TransitionEvents,
   el: Element,
   done?: VoidFunction,
@@ -79,10 +129,11 @@ function enterTransition(
  * Run an exit transition on an element - common for both Transition and TransitionGroup
  */
 export function exitTransition(
-  classes: ReturnType<ReturnType<typeof createClassnames>>,
+  classes: Classes,
   events: TransitionEvents,
   el: Element,
   done?: VoidFunction,
+  afterExit: (el: Element, fn: VoidFunction) => void = (_, fn) => fn(),
 ) {
   const { onBeforeExit, onExit, onAfterExit } = events;
 
@@ -109,16 +160,18 @@ export function exitTransition(
 
   function endTransition(e?: Event) {
     if (!e || e.target === el) {
-      // calling done() will remove element from the DOM,
+      // calling done() will remove element from the DOM in the next flush,
       // but also trigger onChange callback in <TransitionGroup>.
-      // Which is why the classes need to removed afterwards,
+      // Which is why the classes need to removed after the element is removed,
       // so that removing them won't change el styles when for the move transition
       done?.();
       el.removeEventListener("transitionend", endTransition);
       el.removeEventListener("animationend", endTransition);
-      el.classList.remove(...classes.exitActive);
-      el.classList.remove(...classes.exitTo);
-      onAfterExit?.(el);
+      afterExit(el, () => {
+        el.classList.remove(...classes.exitActive);
+        el.classList.remove(...classes.exitTo);
+        onAfterExit?.(el);
+      });
     }
   }
 }
@@ -231,20 +284,20 @@ const TRANSITION_MODE_MAP = {
  */
 export const Transition: FlowComponent<TransitionProps> = props => {
   const classnames = createClassnames(props);
+  const resolved = resolveElements(() => props.children);
 
-  return createSwitchTransition(
-    resolveFirst(() => props.children),
-    {
-      mode: TRANSITION_MODE_MAP[props.mode!],
-      appear: props.appear,
-      onEnter(el, done) {
-        enterTransition(classnames(), props, el, done);
-      },
-      onExit(el, done) {
-        exitTransition(classnames(), props, el, done);
-      },
+  const rendered = createSwitchTransition(() => resolved()[0], {
+    mode: TRANSITION_MODE_MAP[props.mode!],
+    appear: props.appear,
+    onEnter(el, done) {
+      enterTransition(classnames(), props, el, done);
     },
-  ) as unknown as JSX.Element;
+    onExit(el, done) {
+      exitTransition(classnames(), props, el, done, afterExit);
+    },
+  });
+  const afterExit = createAfterExit(rendered);
+  return rendered as unknown as JSX.Element;
 };
 
 /**
@@ -267,8 +320,9 @@ export type TransitionGroupProps = Omit<TransitionProps, "mode"> & {
  */
 export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
   const classnames = createClassnames(props);
+  const resolved = resolveElements(() => props.children);
 
-  return createListTransition(resolveElements(() => props.children).toArray, {
+  const rendered = createListTransition(resolved, {
     appear: props.appear,
     exitMethod: "keep-index",
     onChange({ added, removed, finishRemoved, list }) {
@@ -326,8 +380,10 @@ export const TransitionGroup: FlowComponent<TransitionGroupProps> = props => {
 
       // EXIT
       for (const el of removed) {
-        exitTransition(classes, props, el, () => finishRemoved([el]));
+        exitTransition(classes, props, el, () => finishRemoved([el]), afterExit);
       }
     },
-  }) as unknown as JSX.Element;
+  });
+  const afterExit = createAfterExit(rendered);
+  return rendered as unknown as JSX.Element;
 };

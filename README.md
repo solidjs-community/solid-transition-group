@@ -20,6 +20,8 @@ yarn add solid-transition-group
 pnpm add solid-transition-group
 ```
 
+This version requires Solid 2 (`solid-js` and `@solidjs/web` 2.0 or later). For Solid 1, install `solid-transition-group@0.3`.
+
 ## Transition
 
 `<Transition>` serve as transition effects for single element/component. The `<Transition>` only applies the transition behavior to the wrapped content inside; it doesn't render an extra DOM element, or show up in the inspected component hierarchy.

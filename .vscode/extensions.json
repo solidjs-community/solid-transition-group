@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "esbenp.prettier-vscode",
-    "astro-build.astro-vscode",
     "bradlc.vscode-tailwindcss"
   ]
 }

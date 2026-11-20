@@ -3,8 +3,8 @@
     "module": "NodeNext",
     "target": "ESNext",
     "moduleResolution": "NodeNext",
-    "lib": ["DOM", "ESNext"],
-    "types": [],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "types": ["vite/client"],
     "newLine": "LF",
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
@@ -15,7 +15,7 @@
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
     "jsx": "preserve",
-    "jsxImportSource": "solid-js",
+    "jsxImportSource": "@solidjs/web",
     "paths": {
       "solid-transition-group": ["./src/index.ts"]
     }

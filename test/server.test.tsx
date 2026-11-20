@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Transition } from "../src/index.js";
-import { renderToString } from "solid-js/web";
+import { renderToString } from "@solidjs/web";
 
 describe("Transition", () => {
   it("returns elements in SSR", () => {

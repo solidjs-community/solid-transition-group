@@ -9,7 +9,7 @@ function flushRaf() {
   queue.forEach(cb => cb());
 }
 
-import { Show, createRoot, createSignal } from "solid-js";
+import { Show, createRoot, createSignal, flush } from "solid-js";
 import { describe, expect, it } from "vitest";
 import { Transition, exitTransition } from "../src/index.js";
 
@@ -74,6 +74,7 @@ describe("Transition", () => {
     expect(captured).toHaveLength(0);
 
     setPage(2);
+    flush();
 
     flushRaf();
     flushRaf();
